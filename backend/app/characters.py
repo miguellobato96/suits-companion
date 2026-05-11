@@ -3,16 +3,19 @@ from pydantic import BaseModel
 
 router = APIRouter(prefix="/characters", tags=["Characters"])
 
+
 class CharacterCreate(BaseModel):
     name: str
     role: str
     actor: str
+
 
 class Character(BaseModel):
     id: int
     name: str
     role: str
     actor: str
+
 
 characters = [
     Character(
@@ -35,15 +38,18 @@ characters = [
     ),
 ]
 
+
 def get_next_character_id() -> int:
     if not characters:
         return 1
 
     return max(character.id for character in characters) + 1
 
+
 @router.get("/", response_model=list[Character])
 def get_characters() -> list[Character]:
     return characters
+
 
 @router.get("/{character_id}", response_model=Character)
 def get_character(character_id: int) -> Character:
@@ -52,6 +58,7 @@ def get_character(character_id: int) -> Character:
             return character
 
     raise HTTPException(status_code=404, detail="Character not found")
+
 
 @router.post("/", response_model=Character, status_code=status.HTTP_201_CREATED)
 def create_character(character_data: CharacterCreate) -> Character:
@@ -65,6 +72,7 @@ def create_character(character_data: CharacterCreate) -> Character:
     characters.append(character)
 
     return character
+
 
 @router.put("/{character_id}", response_model=Character)
 def update_character(character_id: int, character_data: CharacterCreate) -> Character:
@@ -80,5 +88,15 @@ def update_character(character_id: int, character_data: CharacterCreate) -> Char
             characters[index] = updated_character
 
             return updated_character
+
+    raise HTTPException(status_code=404, detail="Character not found")
+
+
+@router.delete("/{character_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_character(character_id: int) -> None:
+    for index, character in enumerate(characters):
+        if character.id == character_id:
+            characters.pop(index)
+            return None
 
     raise HTTPException(status_code=404, detail="Character not found")

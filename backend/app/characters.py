@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 router = APIRouter(prefix="/characters", tags=["Characters"])
@@ -34,3 +34,11 @@ characters = [
 @router.get("/", response_model=list[Character])
 def get_characters() -> list[Character]:
     return characters
+
+@router.get("/{character_id}", response_model=Character)
+def get_character(character_id: int) -> Character:
+    for character in characters:
+        if character.id == character_id:
+            return character
+
+    raise HTTPException(status_code=404, detail="Character not found")

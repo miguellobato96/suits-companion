@@ -1,13 +1,13 @@
 from fastapi import APIRouter, HTTPException, status
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 router = APIRouter(prefix="/characters", tags=["Characters"])
 
 
 class CharacterCreate(BaseModel):
-    name: str
-    role: str
-    actor: str
+    name: str = Field(min_length=1, max_length=100)
+    role: str = Field(min_length=1, max_length=100)
+    actor: str = Field(min_length=1, max_length=100)
 
 
 class Character(BaseModel):

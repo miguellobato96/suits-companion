@@ -65,3 +65,20 @@ def create_character(character_data: CharacterCreate) -> Character:
     characters.append(character)
 
     return character
+
+@router.put("/{character_id}", response_model=Character)
+def update_character(character_id: int, character_data: CharacterCreate) -> Character:
+    for index, character in enumerate(characters):
+        if character.id == character_id:
+            updated_character = Character(
+                id=character.id,
+                name=character_data.name,
+                role=character_data.role,
+                actor=character_data.actor,
+            )
+
+            characters[index] = updated_character
+
+            return updated_character
+
+    raise HTTPException(status_code=404, detail="Character not found")

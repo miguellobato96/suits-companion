@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Query, status
+
 from app.character_schemas import Character, CharacterCreate
 
 router = APIRouter(prefix="/characters", tags=["Characters"])
@@ -34,8 +35,21 @@ def get_next_character_id() -> int:
 
 
 @router.get("/", response_model=list[Character])
-def get_characters() -> list[Character]:
-    return characters
+def get_characters(
+    search: str | None = Query(default=None, min_length=1, max_length=100),
+) -> list[Character]:
+    if search is None:
+        return characters
+
+    normalized_search = search.lower()
+
+    return [
+        character
+        for character in characters
+        if normalized_search in character.name.lower()
+        or normalized_search in character.role.lower()
+        or normalized_search in character.actor.lower()
+    ]
 
 
 @router.get("/{character_id}", response_model=Character)

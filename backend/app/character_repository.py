@@ -1,95 +1,85 @@
+from sqlalchemy import or_, select
+from sqlalchemy.orm import Session
+
+from app.character_models import CharacterModel
 from app.character_schemas import Character, CharacterCreate
 
 
-characters = [
-    Character(
-        id=1,
-        name="Harvey Specter",
-        role="Senior Partner",
-        actor="Gabriel Macht",
-    ),
-    Character(
-        id=2,
-        name="Mike Ross",
-        role="Associate",
-        actor="Patrick J. Adams",
-    ),
-    Character(
-        id=3,
-        name="Donna Paulsen",
-        role="Legal Secretary / COO",
-        actor="Sarah Rafferty",
-    ),
-]
+def to_character(character_model: CharacterModel) -> Character:
+    return Character.model_validate(character_model)
 
 
-def get_all_characters(search: str | None = None) -> list[Character]:
-    if search is None:
-        return characters
+def get_all_characters(db: Session, search: str | None = None) -> list[Character]:
+    statement = select(CharacterModel)
 
-    normalized_search = search.lower()
+    if search is not None:
+        search_pattern = f"%{search}%"
 
-    return [
-        character
-        for character in characters
-        if normalized_search in character.name.lower()
-        or normalized_search in character.role.lower()
-        or normalized_search in character.actor.lower()
-    ]
+        statement = statement.where(
+            or_(
+                CharacterModel.name.ilike(search_pattern),
+                CharacterModel.role.ilike(search_pattern),
+                CharacterModel.actor.ilike(search_pattern),
+            )
+        )
 
+    statement = statement.order_by(CharacterModel.id)
 
-def get_character_by_id(character_id: int) -> Character | None:
-    for character in characters:
-        if character.id == character_id:
-            return character
+    character_models = db.scalars(statement).all()
 
-    return None
+    return [to_character(character_model) for character_model in character_models]
 
 
-def create_new_character(character_data: CharacterCreate) -> Character:
-    character = Character(
-        id=get_next_character_id(),
+def get_character_by_id(db: Session, character_id: int) -> Character | None:
+    character_model = db.get(CharacterModel, character_id)
+
+    if character_model is None:
+        return None
+
+    return to_character(character_model)
+
+
+def create_new_character(db: Session, character_data: CharacterCreate) -> Character:
+    character_model = CharacterModel(
         name=character_data.name,
         role=character_data.role,
         actor=character_data.actor,
     )
 
-    characters.append(character)
+    db.add(character_model)
+    db.commit()
+    db.refresh(character_model)
 
-    return character
+    return to_character(character_model)
 
 
 def update_existing_character(
+    db: Session,
     character_id: int,
     character_data: CharacterCreate,
 ) -> Character | None:
-    for index, character in enumerate(characters):
-        if character.id == character_id:
-            updated_character = Character(
-                id=character.id,
-                name=character_data.name,
-                role=character_data.role,
-                actor=character_data.actor,
-            )
+    character_model = db.get(CharacterModel, character_id)
 
-            characters[index] = updated_character
+    if character_model is None:
+        return None
 
-            return updated_character
+    character_model.name = character_data.name
+    character_model.role = character_data.role
+    character_model.actor = character_data.actor
 
-    return None
+    db.commit()
+    db.refresh(character_model)
 
-
-def delete_existing_character(character_id: int) -> bool:
-    for index, character in enumerate(characters):
-        if character.id == character_id:
-            characters.pop(index)
-            return True
-
-    return False
+    return to_character(character_model)
 
 
-def get_next_character_id() -> int:
-    if not characters:
-        return 1
+def delete_existing_character(db: Session, character_id: int) -> bool:
+    character_model = db.get(CharacterModel, character_id)
 
-    return max(character.id for character in characters) + 1
+    if character_model is None:
+        return False
+
+    db.delete(character_model)
+    db.commit()
+
+    return True

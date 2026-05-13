@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class CharacterCreate(BaseModel):
@@ -8,6 +8,8 @@ class CharacterCreate(BaseModel):
 
 
 class Character(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     name: str
     role: str

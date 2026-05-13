@@ -2,7 +2,7 @@ from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
 from app.character_models import CharacterModel
-from app.character_schemas import Character, CharacterCreate
+from app.character_schemas import Character, CharacterCreate, CharacterUpdate
 
 
 def to_character(character_model: CharacterModel) -> Character:
@@ -56,7 +56,7 @@ def create_new_character(db: Session, character_data: CharacterCreate) -> Charac
 def update_existing_character(
     db: Session,
     character_id: int,
-    character_data: CharacterCreate,
+    character_data: CharacterUpdate,
 ) -> Character | None:
     character_model = db.get(CharacterModel, character_id)
 

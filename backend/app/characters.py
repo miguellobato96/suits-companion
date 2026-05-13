@@ -8,7 +8,7 @@ from app.character_repository import (
     get_character_by_id,
     update_existing_character,
 )
-from app.character_schemas import Character, CharacterCreate
+from app.character_schemas import Character, CharacterCreate, CharacterUpdate
 from app.database import get_db
 
 router = APIRouter(prefix="/characters", tags=["Characters"])
@@ -46,7 +46,7 @@ def create_character(
 @router.put("/{character_id}", response_model=Character)
 def update_character(
     character_id: int,
-    character_data: CharacterCreate,
+    character_data: CharacterUpdate,
     db: Session = Depends(get_db),
 ) -> Character:
     character = update_existing_character(db, character_id, character_data)

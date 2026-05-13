@@ -1,10 +1,18 @@
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class CharacterCreate(BaseModel):
+class CharacterBase(BaseModel):
     name: str = Field(min_length=1, max_length=100)
     role: str = Field(min_length=1, max_length=100)
     actor: str = Field(min_length=1, max_length=100)
+
+
+class CharacterCreate(CharacterBase):
+    pass
+
+
+class CharacterUpdate(CharacterBase):
+    pass
 
 
 class Character(BaseModel):

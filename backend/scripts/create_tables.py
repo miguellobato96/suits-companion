@@ -1,4 +1,4 @@
-from app import character_models
+from app import character_models, reference_models
 from app.database import Base, engine
 
 

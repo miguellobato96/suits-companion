@@ -17,9 +17,11 @@ router = APIRouter(prefix="/characters", tags=["Characters"])
 @router.get("/", response_model=list[Character])
 def get_characters(
     search: str | None = Query(default=None, min_length=1, max_length=100),
+    offset: int = Query(default=0, ge=0),
+    limit: int = Query(default=20, ge=1, le=100),
     db: Session = Depends(get_db),
 ) -> list[Character]:
-    return get_all_characters(db, search)
+    return get_all_characters(db, search, offset, limit)
 
 
 @router.get("/{character_id}", response_model=Character)

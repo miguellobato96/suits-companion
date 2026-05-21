@@ -9,7 +9,12 @@ def to_character(character_model: CharacterModel) -> Character:
     return Character.model_validate(character_model)
 
 
-def get_all_characters(db: Session, search: str | None = None) -> list[Character]:
+def get_all_characters(
+    db: Session,
+    search: str | None = None,
+    offset: int = 0,
+    limit: int = 20,
+) -> list[Character]:
     statement = select(CharacterModel)
 
     if search is not None:
@@ -23,7 +28,7 @@ def get_all_characters(db: Session, search: str | None = None) -> list[Character
             )
         )
 
-    statement = statement.order_by(CharacterModel.id)
+    statement = statement.order_by(CharacterModel.id).offset(offset).limit(limit)
 
     character_models = db.scalars(statement).all()
 

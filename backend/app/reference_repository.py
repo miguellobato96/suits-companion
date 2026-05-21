@@ -4,7 +4,12 @@ from sqlalchemy.sql.elements import ColumnElement
 
 from app.character_models import CharacterModel
 from app.reference_models import ReferenceModel
-from app.reference_schemas import Reference, ReferenceCreate, ReferenceUpdate
+from app.reference_schemas import (
+    Reference,
+    ReferenceCreate,
+    ReferencePatch,
+    ReferenceUpdate,
+)
 
 
 def build_reference_search_filter(search: str) -> ColumnElement[bool]:
@@ -139,18 +144,27 @@ def update_existing_reference(
 
     db.commit()
 
-    statement = (
-        select(ReferenceModel)
-        .options(joinedload(ReferenceModel.spoken_by_character))
-        .where(ReferenceModel.id == reference_id)
-    )
+    return get_reference_by_id(db, reference_id)
 
-    updated_reference = db.scalar(statement)
 
-    if updated_reference is None:
+def patch_existing_reference(
+    db: Session,
+    reference_id: int,
+    reference_data: ReferencePatch,
+) -> Reference | None:
+    reference_model = db.get(ReferenceModel, reference_id)
+
+    if reference_model is None:
         return None
 
-    return to_reference(updated_reference)
+    patch_data = reference_data.model_dump(exclude_unset=True)
+
+    for field_name, field_value in patch_data.items():
+        setattr(reference_model, field_name, field_value)
+
+    db.commit()
+
+    return get_reference_by_id(db, reference_id)
 
 
 def delete_existing_reference(db: Session, reference_id: int) -> bool:

@@ -34,6 +34,16 @@ class ReferenceUpdate(ReferenceBase):
     pass
 
 
+class ReferencePatch(BaseModel):
+    title: str | None = Field(default=None, min_length=1, max_length=200)
+    reference_type: ReferenceType | None = None
+    season: int | None = Field(default=None, ge=1)
+    episode: int | None = Field(default=None, ge=1)
+    context: str | None = Field(default=None, min_length=1, max_length=1000)
+    external_url: str | None = Field(default=None, max_length=500)
+    spoken_by_character_id: int | None = Field(default=None, ge=1)
+
+
 class Reference(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

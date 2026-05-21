@@ -9,14 +9,16 @@ from app.reference_repository import (
     delete_existing_reference,
     get_all_references,
     get_reference_by_id,
+    patch_existing_reference,
     update_existing_reference,
 )
 from app.reference_schemas import (
     Reference,
     ReferenceCreate,
     ReferenceListResponse,
-    ReferenceUpdate,
+    ReferencePatch,
     ReferenceType,
+    ReferenceUpdate,
 )
 
 router = APIRouter(prefix="/references", tags=["References"])
@@ -93,6 +95,31 @@ def update_reference(
         raise HTTPException(status_code=400, detail="Character does not exist")
 
     updated_reference = update_existing_reference(db, reference_id, reference_data)
+
+    if updated_reference is None:
+        raise HTTPException(status_code=404, detail="Reference not found")
+
+    return updated_reference
+
+
+@router.patch("/{reference_id}", response_model=Reference)
+def patch_reference(
+    reference_id: int,
+    reference_data: ReferencePatch,
+    db: Session = Depends(get_db),
+) -> Reference:
+    reference = get_reference_by_id(db, reference_id)
+
+    if reference is None:
+        raise HTTPException(status_code=404, detail="Reference not found")
+
+    if (
+        reference_data.spoken_by_character_id is not None
+        and not character_exists(db, reference_data.spoken_by_character_id)
+    ):
+        raise HTTPException(status_code=400, detail="Character does not exist")
+
+    updated_reference = patch_existing_reference(db, reference_id, reference_data)
 
     if updated_reference is None:
         raise HTTPException(status_code=404, detail="Reference not found")

@@ -1,5 +1,5 @@
 from sqlalchemy import func, or_, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.sql.elements import ColumnElement
 
 from app.character_models import CharacterModel
@@ -32,7 +32,9 @@ def get_all_references(
     offset: int = 0,
     limit: int = 20,
 ) -> list[Reference]:
-    statement = select(ReferenceModel)
+    statement = select(ReferenceModel).options(
+        joinedload(ReferenceModel.spoken_by_character)
+    )
 
     if search is not None:
         statement = statement.where(build_reference_search_filter(search))
@@ -71,7 +73,13 @@ def count_references(
 
 
 def get_reference_by_id(db: Session, reference_id: int) -> Reference | None:
-    reference_model = db.get(ReferenceModel, reference_id)
+    statement = (
+        select(ReferenceModel)
+        .options(joinedload(ReferenceModel.spoken_by_character))
+        .where(ReferenceModel.id == reference_id)
+    )
+
+    reference_model = db.scalar(statement)
 
     if reference_model is None:
         return None
@@ -97,7 +105,18 @@ def create_new_reference(
     db.commit()
     db.refresh(reference_model)
 
-    return to_reference(reference_model)
+    statement = (
+        select(ReferenceModel)
+        .options(joinedload(ReferenceModel.spoken_by_character))
+        .where(ReferenceModel.id == reference_model.id)
+    )
+
+    created_reference = db.scalar(statement)
+
+    if created_reference is None:
+        raise RuntimeError("Created reference could not be loaded")
+
+    return to_reference(created_reference)
 
 
 def update_existing_reference(
@@ -119,9 +138,19 @@ def update_existing_reference(
     reference_model.spoken_by_character_id = reference_data.spoken_by_character_id
 
     db.commit()
-    db.refresh(reference_model)
 
-    return to_reference(reference_model)
+    statement = (
+        select(ReferenceModel)
+        .options(joinedload(ReferenceModel.spoken_by_character))
+        .where(ReferenceModel.id == reference_id)
+    )
+
+    updated_reference = db.scalar(statement)
+
+    if updated_reference is None:
+        return None
+
+    return to_reference(updated_reference)
 
 
 def delete_existing_reference(db: Session, reference_id: int) -> bool:

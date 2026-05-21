@@ -2,6 +2,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.character_schemas import Character
+
 
 ReferenceType = Literal[
     "movie",
@@ -43,6 +45,7 @@ class Reference(BaseModel):
     context: str
     external_url: str | None
     spoken_by_character_id: int
+    spoken_by_character: Character
 
 
 class ReferenceListResponse(BaseModel):

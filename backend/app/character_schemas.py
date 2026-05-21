@@ -22,3 +22,10 @@ class Character(BaseModel):
     name: str
     role: str
     actor: str
+
+
+class CharacterListResponse(BaseModel):
+    items: list[Character]
+    total: int
+    offset: int
+    limit: int

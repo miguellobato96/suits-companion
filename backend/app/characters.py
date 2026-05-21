@@ -2,26 +2,40 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.character_repository import (
+    count_characters,
     create_new_character,
     delete_existing_character,
     get_all_characters,
     get_character_by_id,
     update_existing_character,
 )
-from app.character_schemas import Character, CharacterCreate, CharacterUpdate
+from app.character_schemas import (
+    Character,
+    CharacterCreate,
+    CharacterListResponse,
+    CharacterUpdate,
+)
 from app.database import get_db
 
 router = APIRouter(prefix="/characters", tags=["Characters"])
 
 
-@router.get("/", response_model=list[Character])
+@router.get("/", response_model=CharacterListResponse)
 def get_characters(
     search: str | None = Query(default=None, min_length=1, max_length=100),
     offset: int = Query(default=0, ge=0),
     limit: int = Query(default=20, ge=1, le=100),
     db: Session = Depends(get_db),
-) -> list[Character]:
-    return get_all_characters(db, search, offset, limit)
+) -> CharacterListResponse:
+    characters = get_all_characters(db, search, offset, limit)
+    total = count_characters(db, search)
+
+    return CharacterListResponse(
+        items=characters,
+        total=total,
+        offset=offset,
+        limit=limit,
+    )
 
 
 @router.get("/{character_id}", response_model=Character)

@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -55,6 +56,8 @@ class Reference(BaseModel):
     context: str
     external_url: str | None
     spoken_by_character_id: int
+    created_at: datetime
+    updated_at: datetime
     spoken_by_character: Character
 
 

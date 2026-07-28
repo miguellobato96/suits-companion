@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -22,6 +24,8 @@ class Character(BaseModel):
     name: str
     role: str
     actor: str
+    created_at: datetime
+    updated_at: datetime
 
 
 class CharacterListResponse(BaseModel):

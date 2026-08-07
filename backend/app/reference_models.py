@@ -4,7 +4,7 @@ from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
-from app.media_models import reference_media
+from app.media_models import reference_franchises, reference_media
 
 
 class ReferenceModel(Base):
@@ -43,5 +43,10 @@ class ReferenceModel(Base):
 
     media: Mapped[list["MediaModel"]] = relationship(
         secondary=reference_media,
+        back_populates="references",
+    )
+
+    franchises: Mapped[list["FranchiseModel"]] = relationship(
+        secondary=reference_franchises,
         back_populates="references",
     )

@@ -4,6 +4,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.character_schemas import Character
+from app.franchise_schemas import Franchise
 from app.media_schemas import Media
 
 
@@ -35,10 +36,12 @@ class ReferenceBase(BaseModel):
 
 class ReferenceCreate(ReferenceBase):
     media_ids: list[int] = Field(default_factory=list)
+    franchise_ids: list[int] = Field(default_factory=list)
 
 
 class ReferenceUpdate(ReferenceBase):
     media_ids: list[int] = Field(default_factory=list)
+    franchise_ids: list[int] = Field(default_factory=list)
 
 
 class ReferencePatch(BaseModel):
@@ -54,6 +57,7 @@ class ReferencePatch(BaseModel):
     spoken_by_character_id: int | None = Field(default=None, ge=1)
 
     media_ids: list[int] | None = None
+    franchise_ids: list[int] | None = None
 
 
 class Reference(BaseModel):
@@ -73,6 +77,7 @@ class Reference(BaseModel):
 
     spoken_by_character: Character
     media: list[Media]
+    franchises: list[Franchise]
 
     created_at: datetime
     updated_at: datetime

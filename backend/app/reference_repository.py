@@ -2,6 +2,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session, joinedload
 
 from app.character_models import CharacterModel
+from app.franchise_models import FranchiseModel
 from app.media_models import MediaModel
 from app.reference_models import ReferenceModel
 from app.reference_schemas import ReferenceCreate, ReferenceUpdate
@@ -11,6 +12,7 @@ def _reference_load_options():
     return (
         joinedload(ReferenceModel.spoken_by_character),
         joinedload(ReferenceModel.media).joinedload(MediaModel.franchises),
+        joinedload(ReferenceModel.franchises),
     )
 
 
@@ -130,15 +132,35 @@ def get_media_by_ids(
     )
 
 
+def get_franchises_by_ids(
+    db: Session,
+    franchise_ids: list[int],
+) -> list[FranchiseModel]:
+    unique_ids = list(dict.fromkeys(franchise_ids))
+
+    if not unique_ids:
+        return []
+
+    statement = select(FranchiseModel).where(
+        FranchiseModel.id.in_(unique_ids)
+    )
+
+    return list(db.scalars(statement).all())
+
+
 def create_reference(
     db: Session,
     data: ReferenceCreate,
     media: list[MediaModel],
+    franchises: list[FranchiseModel],
 ) -> ReferenceModel:
-    values = data.model_dump(exclude={"media_ids"})
+    values = data.model_dump(
+        exclude={"media_ids", "franchise_ids"}
+    )
 
     reference = ReferenceModel(**values)
     reference.media = media
+    reference.franchises = franchises
 
     db.add(reference)
     db.commit()
@@ -156,13 +178,17 @@ def update_reference(
     reference: ReferenceModel,
     data: ReferenceUpdate,
     media: list[MediaModel],
+    franchises: list[FranchiseModel],
 ) -> ReferenceModel:
-    values = data.model_dump(exclude={"media_ids"})
+    values = data.model_dump(
+        exclude={"media_ids", "franchise_ids"}
+    )
 
     for field, value in values.items():
         setattr(reference, field, value)
 
     reference.media = media
+    reference.franchises = franchises
 
     db.commit()
 
@@ -179,13 +205,18 @@ def patch_reference(
     reference: ReferenceModel,
     updates: dict,
     media: list[MediaModel] | None = None,
+    franchises: list[FranchiseModel] | None = None,
     update_media: bool = False,
+    update_franchises: bool = False,
 ) -> ReferenceModel:
     for field, value in updates.items():
         setattr(reference, field, value)
 
     if update_media:
         reference.media = media or []
+
+    if update_franchises:
+        reference.franchises = franchises or []
 
     db.commit()
 

@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.franchise_models import FranchiseModel
 from app.media_models import MediaModel
 from app.reference_models import ReferenceModel
 from app.reference_repository import (
@@ -9,6 +10,7 @@ from app.reference_repository import (
     count_references,
     create_reference,
     delete_reference,
+    get_franchises_by_ids,
     get_media_by_ids,
     get_reference,
     get_references,
@@ -49,6 +51,26 @@ def resolve_media(
         )
 
     return media
+
+
+def resolve_franchises(
+    db: Session,
+    franchise_ids: list[int],
+) -> list[FranchiseModel]:
+    franchises = get_franchises_by_ids(db, franchise_ids)
+
+    requested_ids = set(franchise_ids)
+    found_ids = {item.id for item in franchises}
+
+    missing_ids = sorted(requested_ids - found_ids)
+
+    if missing_ids:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Franchise does not exist: {missing_ids}",
+        )
+
+    return franchises
 
 
 @router.get(
@@ -122,11 +144,13 @@ def create_reference_endpoint(
         )
 
     media = resolve_media(db, data.media_ids)
+    franchises = resolve_franchises(db, data.franchise_ids)
 
     return create_reference(
         db=db,
         data=data,
         media=media,
+        franchises=franchises,
     )
 
 
@@ -154,12 +178,14 @@ def update_reference_endpoint(
         )
 
     media = resolve_media(db, data.media_ids)
+    franchises = resolve_franchises(db, data.franchise_ids)
 
     return update_reference(
         db=db,
         reference=reference,
         data=data,
         media=media,
+        franchises=franchises,
     )
 
 
@@ -200,12 +226,21 @@ def patch_reference_endpoint(
         media_ids = updates.pop("media_ids") or []
         media = resolve_media(db, media_ids)
 
+    update_franchises = "franchise_ids" in updates
+    franchises = None
+
+    if update_franchises:
+        franchise_ids = updates.pop("franchise_ids") or []
+        franchises = resolve_franchises(db, franchise_ids)
+
     return patch_reference(
         db=db,
         reference=reference,
         updates=updates,
         media=media,
+        franchises=franchises,
         update_media=update_media,
+        update_franchises=update_franchises,
     )
 
 

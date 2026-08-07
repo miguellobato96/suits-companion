@@ -39,6 +39,22 @@ reference_media = Table(
 )
 
 
+reference_franchises = Table(
+    "reference_franchises",
+    Base.metadata,
+    Column(
+        "reference_id",
+        ForeignKey("cultural_references.id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+    Column(
+        "franchise_id",
+        ForeignKey("franchises.id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+)
+
+
 class MediaModel(Base):
     __tablename__ = "media"
 

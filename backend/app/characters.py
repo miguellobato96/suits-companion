@@ -16,7 +16,7 @@ from app.character_schemas import (
     CharacterUpdate,
 )
 from app.database import get_db
-from app.reference_repository import count_references, get_all_references
+from app.reference_repository import count_references, get_references
 from app.reference_schemas import ReferenceListResponse
 
 router = APIRouter(prefix="/characters", tags=["Characters"])
@@ -65,7 +65,7 @@ def get_character_references(
     if character is None:
         raise HTTPException(status_code=404, detail="Character not found")
 
-    references = get_all_references(
+    references = get_references(
         db=db,
         character_id=character_id,
         offset=offset,

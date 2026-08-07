@@ -4,15 +4,18 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.character_schemas import Character
+from app.media_schemas import Media
 
 
 ReferenceType = Literal[
     "movie",
     "series",
+    "character",
     "person",
     "book",
     "music",
     "brand",
+    "franchise",
     "other",
 ]
 
@@ -20,29 +23,37 @@ ReferenceType = Literal[
 class ReferenceBase(BaseModel):
     title: str = Field(min_length=1, max_length=200)
     reference_type: ReferenceType
+
     season: int | None = Field(default=None, ge=1)
     episode: int | None = Field(default=None, ge=1)
-    context: str = Field(min_length=1, max_length=1000)
-    external_url: str | None = Field(default=None, max_length=500)
+
+    quote: str | None = None
+    context: str = Field(min_length=1)
+
     spoken_by_character_id: int = Field(ge=1)
 
 
 class ReferenceCreate(ReferenceBase):
-    pass
+    media_ids: list[int] = Field(default_factory=list)
 
 
 class ReferenceUpdate(ReferenceBase):
-    pass
+    media_ids: list[int] = Field(default_factory=list)
 
 
 class ReferencePatch(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=200)
     reference_type: ReferenceType | None = None
+
     season: int | None = Field(default=None, ge=1)
     episode: int | None = Field(default=None, ge=1)
-    context: str | None = Field(default=None, min_length=1, max_length=1000)
-    external_url: str | None = Field(default=None, max_length=500)
+
+    quote: str | None = None
+    context: str | None = Field(default=None, min_length=1)
+
     spoken_by_character_id: int | None = Field(default=None, ge=1)
+
+    media_ids: list[int] | None = None
 
 
 class Reference(BaseModel):
@@ -51,14 +62,20 @@ class Reference(BaseModel):
     id: int
     title: str
     reference_type: str
+
     season: int | None
     episode: int | None
+
+    quote: str | None
     context: str
-    external_url: str | None
+
     spoken_by_character_id: int
+
+    spoken_by_character: Character
+    media: list[Media]
+
     created_at: datetime
     updated_at: datetime
-    spoken_by_character: Character
 
 
 class ReferenceListResponse(BaseModel):

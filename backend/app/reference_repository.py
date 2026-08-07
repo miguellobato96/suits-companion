@@ -1,60 +1,60 @@
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy.sql.elements import ColumnElement
 
 from app.character_models import CharacterModel
+from app.media_models import MediaModel
 from app.reference_models import ReferenceModel
-from app.reference_schemas import (
-    Reference,
-    ReferenceCreate,
-    ReferencePatch,
-    ReferenceUpdate,
-)
+from app.reference_schemas import ReferenceCreate, ReferenceUpdate
 
 
-def build_reference_search_filter(search: str) -> ColumnElement[bool]:
-    search_pattern = f"%{search}%"
-
-    return or_(
-        ReferenceModel.title.ilike(search_pattern),
-        ReferenceModel.context.ilike(search_pattern),
+def _reference_load_options():
+    return (
+        joinedload(ReferenceModel.spoken_by_character),
+        joinedload(ReferenceModel.media).joinedload(MediaModel.franchises),
     )
 
 
-def to_reference(reference_model: ReferenceModel) -> Reference:
-    return Reference.model_validate(reference_model)
-
-
-def character_exists(db: Session, character_id: int) -> bool:
-    return db.get(CharacterModel, character_id) is not None
-
-
-def get_all_references(
+def get_references(
     db: Session,
     search: str | None = None,
     reference_type: str | None = None,
     character_id: int | None = None,
     offset: int = 0,
     limit: int = 20,
-) -> list[Reference]:
-    statement = select(ReferenceModel).options(
-        joinedload(ReferenceModel.spoken_by_character)
+) -> list[ReferenceModel]:
+    statement = (
+        select(ReferenceModel)
+        .options(*_reference_load_options())
+        .order_by(ReferenceModel.id)
     )
 
-    if search is not None:
-        statement = statement.where(build_reference_search_filter(search))
+    if search:
+        pattern = f"%{search}%"
+        statement = statement.where(
+            or_(
+                ReferenceModel.title.ilike(pattern),
+                ReferenceModel.quote.ilike(pattern),
+                ReferenceModel.context.ilike(pattern),
+            )
+        )
 
-    if reference_type is not None:
-        statement = statement.where(ReferenceModel.reference_type == reference_type)
+    if reference_type:
+        statement = statement.where(
+            ReferenceModel.reference_type == reference_type
+        )
 
     if character_id is not None:
-        statement = statement.where(ReferenceModel.spoken_by_character_id == character_id)
+        statement = statement.where(
+            ReferenceModel.spoken_by_character_id == character_id
+        )
 
-    statement = statement.order_by(ReferenceModel.id).offset(offset).limit(limit)
+    statement = statement.offset(offset).limit(limit)
 
-    reference_models = db.scalars(statement).all()
-
-    return [to_reference(reference_model) for reference_model in reference_models]
+    return list(
+        db.scalars(statement)
+        .unique()
+        .all()
+    )
 
 
 def count_references(
@@ -65,115 +65,165 @@ def count_references(
 ) -> int:
     statement = select(func.count()).select_from(ReferenceModel)
 
-    if search is not None:
-        statement = statement.where(build_reference_search_filter(search))
+    if search:
+        pattern = f"%{search}%"
+        statement = statement.where(
+            or_(
+                ReferenceModel.title.ilike(pattern),
+                ReferenceModel.quote.ilike(pattern),
+                ReferenceModel.context.ilike(pattern),
+            )
+        )
 
-    if reference_type is not None:
-        statement = statement.where(ReferenceModel.reference_type == reference_type)
+    if reference_type:
+        statement = statement.where(
+            ReferenceModel.reference_type == reference_type
+        )
 
     if character_id is not None:
-        statement = statement.where(ReferenceModel.spoken_by_character_id == character_id)
+        statement = statement.where(
+            ReferenceModel.spoken_by_character_id == character_id
+        )
 
     return db.scalar(statement) or 0
 
 
-def get_reference_by_id(db: Session, reference_id: int) -> Reference | None:
+def get_reference(
+    db: Session,
+    reference_id: int,
+) -> ReferenceModel | None:
     statement = (
         select(ReferenceModel)
-        .options(joinedload(ReferenceModel.spoken_by_character))
+        .options(*_reference_load_options())
         .where(ReferenceModel.id == reference_id)
     )
 
-    reference_model = db.scalar(statement)
-
-    if reference_model is None:
-        return None
-
-    return to_reference(reference_model)
+    return db.scalars(statement).unique().one_or_none()
 
 
-def create_new_reference(
+def character_exists(
     db: Session,
-    reference_data: ReferenceCreate,
-) -> Reference:
-    reference_model = ReferenceModel(
-        title=reference_data.title,
-        reference_type=reference_data.reference_type,
-        season=reference_data.season,
-        episode=reference_data.episode,
-        context=reference_data.context,
-        external_url=reference_data.external_url,
-        spoken_by_character_id=reference_data.spoken_by_character_id,
-    )
+    character_id: int,
+) -> bool:
+    return db.get(CharacterModel, character_id) is not None
 
-    db.add(reference_model)
-    db.commit()
-    db.refresh(reference_model)
+
+def get_media_by_ids(
+    db: Session,
+    media_ids: list[int],
+) -> list[MediaModel]:
+    unique_ids = list(dict.fromkeys(media_ids))
+
+    if not unique_ids:
+        return []
 
     statement = (
-        select(ReferenceModel)
-        .options(joinedload(ReferenceModel.spoken_by_character))
-        .where(ReferenceModel.id == reference_model.id)
+        select(MediaModel)
+        .options(joinedload(MediaModel.franchises))
+        .where(MediaModel.id.in_(unique_ids))
     )
 
-    created_reference = db.scalar(statement)
+    return list(
+        db.scalars(statement)
+        .unique()
+        .all()
+    )
+
+
+def create_reference(
+    db: Session,
+    data: ReferenceCreate,
+    media: list[MediaModel],
+) -> ReferenceModel:
+    values = data.model_dump(exclude={"media_ids"})
+
+    reference = ReferenceModel(**values)
+    reference.media = media
+
+    db.add(reference)
+    db.commit()
+
+    created_reference = get_reference(db, reference.id)
 
     if created_reference is None:
-        raise RuntimeError("Created reference could not be loaded")
+        raise RuntimeError("Created reference could not be retrieved")
 
-    return to_reference(created_reference)
+    return created_reference
 
 
-def update_existing_reference(
+def update_reference(
     db: Session,
-    reference_id: int,
-    reference_data: ReferenceUpdate,
-) -> Reference | None:
-    reference_model = db.get(ReferenceModel, reference_id)
+    reference: ReferenceModel,
+    data: ReferenceUpdate,
+    media: list[MediaModel],
+) -> ReferenceModel:
+    values = data.model_dump(exclude={"media_ids"})
 
-    if reference_model is None:
-        return None
+    for field, value in values.items():
+        setattr(reference, field, value)
 
-    reference_model.title = reference_data.title
-    reference_model.reference_type = reference_data.reference_type
-    reference_model.season = reference_data.season
-    reference_model.episode = reference_data.episode
-    reference_model.context = reference_data.context
-    reference_model.external_url = reference_data.external_url
-    reference_model.spoken_by_character_id = reference_data.spoken_by_character_id
+    reference.media = media
 
     db.commit()
 
-    return get_reference_by_id(db, reference_id)
+    updated_reference = get_reference(db, reference.id)
+
+    if updated_reference is None:
+        raise RuntimeError("Updated reference could not be retrieved")
+
+    return updated_reference
 
 
-def patch_existing_reference(
+def patch_reference(
     db: Session,
-    reference_id: int,
-    reference_data: ReferencePatch,
-) -> Reference | None:
-    reference_model = db.get(ReferenceModel, reference_id)
+    reference: ReferenceModel,
+    updates: dict,
+    media: list[MediaModel] | None = None,
+    update_media: bool = False,
+) -> ReferenceModel:
+    for field, value in updates.items():
+        setattr(reference, field, value)
 
-    if reference_model is None:
-        return None
-
-    patch_data = reference_data.model_dump(exclude_unset=True)
-
-    for field_name, field_value in patch_data.items():
-        setattr(reference_model, field_name, field_value)
+    if update_media:
+        reference.media = media or []
 
     db.commit()
 
-    return get_reference_by_id(db, reference_id)
+    updated_reference = get_reference(db, reference.id)
+
+    if updated_reference is None:
+        raise RuntimeError("Updated reference could not be retrieved")
+
+    return updated_reference
 
 
-def delete_existing_reference(db: Session, reference_id: int) -> bool:
-    reference_model = db.get(ReferenceModel, reference_id)
-
-    if reference_model is None:
-        return False
-
-    db.delete(reference_model)
+def delete_reference(
+    db: Session,
+    reference: ReferenceModel,
+) -> None:
+    db.delete(reference)
     db.commit()
 
-    return True
+
+def get_references_by_character(
+    db: Session,
+    character_id: int,
+    offset: int = 0,
+    limit: int = 20,
+) -> list[ReferenceModel]:
+    return get_references(
+        db=db,
+        character_id=character_id,
+        offset=offset,
+        limit=limit,
+    )
+
+
+def count_references_by_character(
+    db: Session,
+    character_id: int,
+) -> int:
+    return count_references(
+        db=db,
+        character_id=character_id,
+    )

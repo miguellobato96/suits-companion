@@ -11,3 +11,10 @@ class Media(BaseModel):
     media_type: str
     release_year: int | None
     franchises: list[Franchise]
+
+
+class MediaListResponse(BaseModel):
+    items: list[Media]
+    total: int
+    offset: int
+    limit: int

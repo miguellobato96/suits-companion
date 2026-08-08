@@ -21,6 +21,7 @@ def get_references(
     search: str | None = None,
     reference_type: str | None = None,
     character_id: int | None = None,
+    franchise_id: int | None = None,
     offset: int = 0,
     limit: int = 20,
 ) -> list[ReferenceModel]:
@@ -50,6 +51,13 @@ def get_references(
             ReferenceModel.spoken_by_character_id == character_id
         )
 
+    if franchise_id is not None:
+        statement = statement.where(
+            ReferenceModel.franchises.any(
+                FranchiseModel.id == franchise_id
+            )
+        )
+
     statement = statement.offset(offset).limit(limit)
 
     return list(
@@ -64,6 +72,7 @@ def count_references(
     search: str | None = None,
     reference_type: str | None = None,
     character_id: int | None = None,
+    franchise_id: int | None = None,
 ) -> int:
     statement = select(func.count()).select_from(ReferenceModel)
 
@@ -85,6 +94,13 @@ def count_references(
     if character_id is not None:
         statement = statement.where(
             ReferenceModel.spoken_by_character_id == character_id
+        )
+
+    if franchise_id is not None:
+        statement = statement.where(
+            ReferenceModel.franchises.any(
+                FranchiseModel.id == franchise_id
+            )
         )
 
     return db.scalar(statement) or 0

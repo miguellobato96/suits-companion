@@ -63,3 +63,22 @@ def test_get_missing_character_references_returns_404() -> None:
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Character not found"}
+
+
+def test_references_reject_invalid_franchise_id():
+    response = client.get("/references/?franchise_id=0")
+
+    assert response.status_code == 422
+
+
+def test_references_unknown_franchise_returns_empty_page():
+    response = client.get("/references/?franchise_id=999999")
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["items"] == []
+    assert data["total"] == 0
+    assert data["offset"] == 0
+    assert data["limit"] == 20

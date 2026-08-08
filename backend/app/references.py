@@ -81,6 +81,7 @@ def list_references(
     search: str | None = Query(default=None),
     reference_type: ReferenceType | None = Query(default=None),
     character_id: int | None = Query(default=None, ge=1),
+    franchise_id: int | None = Query(default=None, ge=1),
     offset: int = Query(default=0, ge=0),
     limit: int = Query(default=20, ge=1, le=100),
     db: Session = Depends(get_db),
@@ -90,6 +91,7 @@ def list_references(
         search=search,
         reference_type=reference_type,
         character_id=character_id,
+        franchise_id=franchise_id,
         offset=offset,
         limit=limit,
     )
@@ -99,6 +101,7 @@ def list_references(
         search=search,
         reference_type=reference_type,
         character_id=character_id,
+        franchise_id=franchise_id,
     )
 
     return ReferenceListResponse(

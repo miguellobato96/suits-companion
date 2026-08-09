@@ -1,6 +1,6 @@
-from alembic import op
 import sqlalchemy as sa
 
+from alembic import op
 
 revision = "0004_add_reference_franchises"
 down_revision = "0003_add_media_and_franchises"

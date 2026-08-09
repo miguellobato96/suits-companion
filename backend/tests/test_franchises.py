@@ -2,7 +2,6 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 
-
 client = TestClient(app)
 
 
@@ -23,9 +22,6 @@ def test_franchises_are_sorted_by_name():
 
     data = response.json()
 
-    names = [
-        franchise["name"]
-        for franchise in data
-    ]
+    names = [franchise["name"] for franchise in data]
 
     assert names == sorted(names)

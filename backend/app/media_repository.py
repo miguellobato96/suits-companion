@@ -2,7 +2,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload
 
 from app.media_models import MediaModel
-from app.reference_models import ReferenceModel
+from app.reference_models import ReferenceModel  # noqa: F401
 
 
 def get_media(
@@ -18,11 +18,7 @@ def get_media(
         .limit(limit)
     )
 
-    return list(
-        db.scalars(statement)
-        .unique()
-        .all()
-    )
+    return list(db.scalars(statement).unique().all())
 
 
 def count_media(db: Session) -> int:

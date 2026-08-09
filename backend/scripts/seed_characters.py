@@ -3,7 +3,6 @@ from sqlalchemy import select
 from app.character_models import CharacterModel
 from app.database import SessionLocal
 
-
 CHARACTERS = [
     {
         "name": "Harvey Specter",

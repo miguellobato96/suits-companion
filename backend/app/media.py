@@ -6,7 +6,6 @@ from app.media_models import MediaModel
 from app.media_repository import count_media, get_media, get_media_by_id
 from app.media_schemas import Media, MediaListResponse
 
-
 router = APIRouter(
     prefix="/media",
     tags=["media"],

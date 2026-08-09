@@ -1,10 +1,15 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 from app.media_models import reference_franchises, reference_media
+
+if TYPE_CHECKING:
+    from app.franchise_models import FranchiseModel
+    from app.media_models import MediaModel
 
 
 class ReferenceModel(Base):

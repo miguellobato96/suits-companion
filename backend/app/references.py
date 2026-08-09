@@ -26,7 +26,6 @@ from app.reference_schemas import (
     ReferenceUpdate,
 )
 
-
 router = APIRouter(
     prefix="/references",
     tags=["references"],
@@ -213,10 +212,7 @@ def patch_reference_endpoint(
 
     character_id = updates.get("spoken_by_character_id")
 
-    if (
-        character_id is not None
-        and not character_exists(db, character_id)
-    ):
+    if character_id is not None and not character_exists(db, character_id):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Character does not exist",

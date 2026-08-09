@@ -6,7 +6,6 @@ from app.franchises import router as franchises_router
 from app.media import router as media_router
 from app.references import router as references_router
 
-
 app = FastAPI(title=settings.app_name)
 
 app.include_router(characters_router)

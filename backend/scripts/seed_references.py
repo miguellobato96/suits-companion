@@ -9,7 +9,6 @@ from app.franchise_models import FranchiseModel
 from app.media_models import MediaModel
 from app.reference_models import ReferenceModel
 
-
 MediaKey = tuple[str, int]
 
 
@@ -75,9 +74,7 @@ REFERENCES = [
         episode=1,
         character="Mike Ross",
         quote="Kilmer.",
-        context=(
-            "Mike names Val Kilmer while he and Harvey compare Batman actors."
-        ),
+        context=("Mike names Val Kilmer while he and Harvey compare Batman actors."),
         media=(("Batman Forever", 1995),),
         franchises=("Batman",),
     ),
@@ -88,9 +85,7 @@ REFERENCES = [
         episode=1,
         character="Harvey Specter",
         quote="Clooney.",
-        context=(
-            "Harvey chooses George Clooney during the Batman actor exchange."
-        ),
+        context=("Harvey chooses George Clooney during the Batman actor exchange."),
         media=(("Batman & Robin", 1997),),
         franchises=("Batman",),
     ),
@@ -101,9 +96,7 @@ REFERENCES = [
         episode=1,
         character="Mike Ross",
         quote="Keaton.",
-        context=(
-            "Mike chooses Michael Keaton during the Batman actor exchange."
-        ),
+        context=("Mike chooses Michael Keaton during the Batman actor exchange."),
         media=(
             ("Batman", 1989),
             ("Batman Returns", 1992),
@@ -123,7 +116,6 @@ REFERENCES = [
         ),
         media=(("Animal House", 1978),),
     ),
-
     # S01E02 — Errors and Omissions
     ReferenceSeed(
         title="Ark of the Covenant",
@@ -159,12 +151,9 @@ REFERENCES = [
         episode=2,
         character="Wyatt",
         quote="Wow, they're like Stormtroopers.",
-        context=(
-            "Wyatt compares a group of investors to Imperial Stormtroopers."
-        ),
+        context=("Wyatt compares a group of investors to Imperial Stormtroopers."),
         franchises=("Star Wars",),
     ),
-
     # S01E03 — Meet the New Boss
     ReferenceSeed(
         title="Nurse Ratched",
@@ -179,7 +168,6 @@ REFERENCES = [
         ),
         media=(("One Flew Over the Cuckoo's Nest", 1975),),
     ),
-
     # S01E05 — Bail Out
     ReferenceSeed(
         title="Gordon Gekko",
@@ -188,9 +176,7 @@ REFERENCES = [
         episode=5,
         character="Trevor Evans",
         quote="You look like Gordon Gekko's little brother.",
-        context=(
-            "Trevor compares Mike's appearance to Gordon Gekko from Wall Street."
-        ),
+        context=("Trevor compares Mike's appearance to Gordon Gekko from Wall Street."),
         media=(("Wall Street", 1987),),
     ),
     ReferenceSeed(
@@ -200,9 +186,7 @@ REFERENCES = [
         episode=5,
         character="Harvey Specter",
         quote="I say Atticus Finch makes a good speech here.",
-        context=(
-            "Harvey compares Tony's courtroom argument to Atticus Finch."
-        ),
+        context=("Harvey compares Tony's courtroom argument to Atticus Finch."),
         media=(("To Kill a Mockingbird", 1962),),
     ),
     ReferenceSeed(
@@ -218,7 +202,6 @@ REFERENCES = [
         ),
         media=(("Ally McBeal", 1997),),
     ),
-
     # S01E06 — Tricks of the Trade
     ReferenceSeed(
         title="Top Gun — Wingman",
@@ -227,9 +210,7 @@ REFERENCES = [
         episode=6,
         character="Harvey Specter",
         quote="I am not leaving my wingman.",
-        context=(
-            "Harvey deliberately uses a Top Gun reference while defending Louis."
-        ),
+        context=("Harvey deliberately uses a Top Gun reference while defending Louis."),
         media=(("Top Gun", 1986),),
     ),
     ReferenceSeed(
@@ -239,9 +220,7 @@ REFERENCES = [
         episode=6,
         character="Jessica Pearson",
         quote="Your ego's writing checks that your body can't cash.",
-        context=(
-            "Jessica answers Harvey with another Top Gun reference."
-        ),
+        context=("Jessica answers Harvey with another Top Gun reference."),
         media=(("Top Gun", 1986),),
     ),
     ReferenceSeed(
@@ -251,9 +230,7 @@ REFERENCES = [
         episode=6,
         character="Mike Ross",
         quote="It was like he was Mr. T and you were Rocky.",
-        context=(
-            "Mike compares a confrontation to Rocky fighting Clubber Lang."
-        ),
+        context=("Mike compares a confrontation to Rocky fighting Clubber Lang."),
         media=(("Rocky III", 1982),),
         franchises=("Rocky",),
     ),
@@ -290,12 +267,9 @@ REFERENCES = [
         episode=6,
         character="Mike Ross",
         quote="Make money money, make money!",
-        context=(
-            "Mike echoes the party sequence and music used in Old School."
-        ),
+        context=("Mike echoes the party sequence and music used in Old School."),
         media=(("Old School", 2003),),
     ),
-
     # S01E07 — Play the Man
     ReferenceSeed(
         title="Clark Kent",
@@ -304,9 +278,7 @@ REFERENCES = [
         episode=7,
         character="Jenny Griffith",
         quote="You're maybe not as cool as Clark Kent.",
-        context=(
-            "Jenny compares Mike's secret double life to Clark Kent's."
-        ),
+        context=("Jenny compares Mike's secret double life to Clark Kent's."),
         franchises=("Superman",),
     ),
     ReferenceSeed(
@@ -323,7 +295,6 @@ REFERENCES = [
         media=(("Star Trek II: The Wrath of Khan", 1982),),
         franchises=("Star Trek",),
     ),
-
     # S01E08 — Identity Crisis
     ReferenceSeed(
         title="Dirty Harry",
@@ -332,9 +303,7 @@ REFERENCES = [
         episode=8,
         character="Harvey Specter",
         quote="Feeling lucky today, punk?",
-        context=(
-            "Harvey references Dirty Harry after seeing Louis with a .44 Magnum."
-        ),
+        context=("Harvey references Dirty Harry after seeing Louis with a .44 Magnum."),
         media=(("Dirty Harry", 1971),),
         franchises=("Dirty Harry",),
     ),
@@ -352,7 +321,6 @@ REFERENCES = [
         media=(("The Godfather", 1972),),
         franchises=("The Godfather",),
     ),
-
     # S01E09 — Undefeated
     ReferenceSeed(
         title="James Bond",
@@ -373,9 +341,7 @@ REFERENCES = [
         episode=9,
         character="Harvey Specter",
         quote="Pussy Galore.",
-        context=(
-            "Harvey compares Vanessa to the Bond character Pussy Galore."
-        ),
+        context=("Harvey compares Vanessa to the Bond character Pussy Galore."),
         media=(("Goldfinger", 1964),),
         franchises=("James Bond",),
     ),
@@ -386,9 +352,7 @@ REFERENCES = [
         episode=9,
         character="Harvey Specter",
         quote="Octopussy?",
-        context=(
-            "Harvey follows his Bond reference by naming Octopussy."
-        ),
+        context=("Harvey follows his Bond reference by naming Octopussy."),
         media=(("Octopussy", 1983),),
         franchises=("James Bond",),
     ),
@@ -399,9 +363,7 @@ REFERENCES = [
         episode=9,
         character="Mike Ross",
         quote="It's Louis Litt, not Darth Vader.",
-        context=(
-            "Mike tells Jimmy not to treat Louis as though he were Darth Vader."
-        ),
+        context=("Mike tells Jimmy not to treat Louis as though he were Darth Vader."),
         franchises=("Star Wars",),
     ),
     ReferenceSeed(
@@ -417,7 +379,6 @@ REFERENCES = [
         ),
         media=(("Lord of the Flies", 1954),),
     ),
-
     # S01E10 — The Shelf Life
     ReferenceSeed(
         title="Niles Crane",
@@ -426,12 +387,9 @@ REFERENCES = [
         episode=10,
         character="Harvey Specter",
         quote="You sound like Frasier's brother.",
-        context=(
-            "Harvey compares Louis's fussiness about wine to Niles Crane."
-        ),
+        context=("Harvey compares Louis's fussiness about wine to Niles Crane."),
         media=(("Frasier", 1993),),
     ),
-
     # S01E11 — Rules of the Game
     ReferenceSeed(
         title="Spies Like Us",
@@ -459,7 +417,6 @@ REFERENCES = [
         ),
         franchises=("James Bond",),
     ),
-
     # S01E12 — Dog Fight
     ReferenceSeed(
         title="Mississippi Burning",
@@ -493,9 +450,7 @@ REFERENCES = [
         episode=12,
         character="Mike Ross",
         quote="Gone With The Wind?",
-        context=(
-            "Mike asks Rachel whether she has seen Gone with the Wind."
-        ),
+        context=("Mike asks Rachel whether she has seen Gone with the Wind."),
         media=(("Gone with the Wind", 1939),),
     ),
     ReferenceSeed(
@@ -505,9 +460,7 @@ REFERENCES = [
         episode=12,
         character="Mike Ross",
         quote="Citizen Kane?",
-        context=(
-            "Mike asks Rachel whether she has seen Citizen Kane."
-        ),
+        context=("Mike asks Rachel whether she has seen Citizen Kane."),
         media=(("Citizen Kane", 1941),),
     ),
     ReferenceSeed(
@@ -517,29 +470,20 @@ REFERENCES = [
         episode=12,
         character="Rachel Zane",
         quote="Nobody puts Baby in the corner.",
-        context=(
-            "Rachel recognizes Dirty Dancing by quoting its best-known line."
-        ),
+        context=("Rachel recognizes Dirty Dancing by quoting its best-known line."),
         media=(("Dirty Dancing", 1987),),
     ),
 ]
 
 
 def load_characters(db: Session) -> dict[str, CharacterModel]:
-    characters = db.scalars(
-        select(CharacterModel)
-    ).all()
+    characters = db.scalars(select(CharacterModel)).all()
 
-    return {
-        character.name: character
-        for character in characters
-    }
+    return {character.name: character for character in characters}
 
 
 def load_media(db: Session) -> dict[MediaKey, MediaModel]:
-    media_items = db.scalars(
-        select(MediaModel)
-    ).all()
+    media_items = db.scalars(select(MediaModel)).all()
 
     return {
         (media.title, media.release_year): media
@@ -549,14 +493,9 @@ def load_media(db: Session) -> dict[MediaKey, MediaModel]:
 
 
 def load_franchises(db: Session) -> dict[str, FranchiseModel]:
-    franchises = db.scalars(
-        select(FranchiseModel)
-    ).all()
+    franchises = db.scalars(select(FranchiseModel)).all()
 
-    return {
-        franchise.name: franchise
-        for franchise in franchises
-    }
+    return {franchise.name: franchise for franchise in franchises}
 
 
 def validate_dependencies(
@@ -593,19 +532,13 @@ def validate_dependencies(
     errors = []
 
     if missing_characters:
-        errors.append(
-            f"Missing characters: {missing_characters}"
-        )
+        errors.append(f"Missing characters: {missing_characters}")
 
     if missing_media:
-        errors.append(
-            f"Missing media: {missing_media}"
-        )
+        errors.append(f"Missing media: {missing_media}")
 
     if missing_franchises:
-        errors.append(
-            f"Missing franchises: {missing_franchises}"
-        )
+        errors.append(f"Missing franchises: {missing_franchises}")
 
     if errors:
         raise RuntimeError("\n".join(errors))
@@ -645,29 +578,17 @@ def sync_reference(
             setattr(existing, field, value)
             changed = True
 
-    current_media_ids = {
-        item.id
-        for item in existing.media
-    }
+    current_media_ids = {item.id for item in existing.media}
 
-    expected_media_ids = {
-        item.id
-        for item in media_items
-    }
+    expected_media_ids = {item.id for item in media_items}
 
     if current_media_ids != expected_media_ids:
         existing.media = media_items
         changed = True
 
-    current_franchise_ids = {
-        item.id
-        for item in existing.franchises
-    }
+    current_franchise_ids = {item.id for item in existing.franchises}
 
-    expected_franchise_ids = {
-        item.id
-        for item in franchise_items
-    }
+    expected_franchise_ids = {item.id for item in franchise_items}
 
     if current_franchise_ids != expected_franchise_ids:
         existing.franchises = franchise_items
@@ -694,15 +615,9 @@ def seed_references() -> None:
         for reference in REFERENCES:
             character = characters[reference.character]
 
-            media_items = [
-                media[media_key]
-                for media_key in reference.media
-            ]
+            media_items = [media[media_key] for media_key in reference.media]
 
-            franchise_items = [
-                franchises[name]
-                for name in reference.franchises
-            ]
+            franchise_items = [franchises[name] for name in reference.franchises]
 
             existing = get_existing_reference(
                 db=db,

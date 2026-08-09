@@ -1,11 +1,10 @@
 from sqlalchemy import select
 
-from app.character_models import CharacterModel
+from app.character_models import CharacterModel  # noqa: F401
 from app.database import SessionLocal
 from app.franchise_models import FranchiseModel
 from app.media_models import MediaModel
-from app.reference_models import ReferenceModel
-
+from app.reference_models import ReferenceModel  # noqa: F401
 
 FRANCHISES = [
     "Batman",
@@ -227,11 +226,7 @@ def get_or_create_franchise(
     db,
     name: str,
 ) -> tuple[FranchiseModel, bool]:
-    franchise = db.scalar(
-        select(FranchiseModel).where(
-            FranchiseModel.name == name
-        )
-    )
+    franchise = db.scalar(select(FranchiseModel).where(FranchiseModel.name == name))
 
     if franchise is not None:
         return franchise, False
@@ -296,14 +291,10 @@ def seed_media() -> None:
                 inserted_media += 1
 
             expected_franchises = [
-                franchise_map[name]
-                for name in media_data["franchises"]
+                franchise_map[name] for name in media_data["franchises"]
             ]
 
-            existing_franchise_ids = {
-                franchise.id
-                for franchise in media.franchises
-            }
+            existing_franchise_ids = {franchise.id for franchise in media.franchises}
 
             for franchise in expected_franchises:
                 if franchise.id not in existing_franchise_ids:

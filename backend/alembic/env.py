@@ -1,15 +1,16 @@
 from logging.config import fileConfig
 
-from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from app.character_models import CharacterModel
-from app.franchise_models import FranchiseModel
-from app.media_models import MediaModel
-from app.reference_models import ReferenceModel
+from alembic import context
+from app import (
+    character_models,  # noqa: F401
+    franchise_models,  # noqa: F401
+    media_models,  # noqa: F401
+    reference_models,  # noqa: F401
+)
 from app.config import settings
 from app.database import Base
-
 
 config = context.config
 config.set_main_option("sqlalchemy.url", settings.database_url)

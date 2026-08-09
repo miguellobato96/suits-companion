@@ -7,7 +7,6 @@ from app.character_schemas import Character
 from app.franchise_schemas import Franchise
 from app.media_schemas import Media
 
-
 ReferenceType = Literal[
     "movie",
     "series",

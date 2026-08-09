@@ -42,9 +42,7 @@ def get_references(
         )
 
     if reference_type:
-        statement = statement.where(
-            ReferenceModel.reference_type == reference_type
-        )
+        statement = statement.where(ReferenceModel.reference_type == reference_type)
 
     if character_id is not None:
         statement = statement.where(
@@ -53,18 +51,12 @@ def get_references(
 
     if franchise_id is not None:
         statement = statement.where(
-            ReferenceModel.franchises.any(
-                FranchiseModel.id == franchise_id
-            )
+            ReferenceModel.franchises.any(FranchiseModel.id == franchise_id)
         )
 
     statement = statement.offset(offset).limit(limit)
 
-    return list(
-        db.scalars(statement)
-        .unique()
-        .all()
-    )
+    return list(db.scalars(statement).unique().all())
 
 
 def count_references(
@@ -87,9 +79,7 @@ def count_references(
         )
 
     if reference_type:
-        statement = statement.where(
-            ReferenceModel.reference_type == reference_type
-        )
+        statement = statement.where(ReferenceModel.reference_type == reference_type)
 
     if character_id is not None:
         statement = statement.where(
@@ -98,9 +88,7 @@ def count_references(
 
     if franchise_id is not None:
         statement = statement.where(
-            ReferenceModel.franchises.any(
-                FranchiseModel.id == franchise_id
-            )
+            ReferenceModel.franchises.any(FranchiseModel.id == franchise_id)
         )
 
     return db.scalar(statement) or 0
@@ -141,11 +129,7 @@ def get_media_by_ids(
         .where(MediaModel.id.in_(unique_ids))
     )
 
-    return list(
-        db.scalars(statement)
-        .unique()
-        .all()
-    )
+    return list(db.scalars(statement).unique().all())
 
 
 def get_franchises_by_ids(
@@ -157,9 +141,7 @@ def get_franchises_by_ids(
     if not unique_ids:
         return []
 
-    statement = select(FranchiseModel).where(
-        FranchiseModel.id.in_(unique_ids)
-    )
+    statement = select(FranchiseModel).where(FranchiseModel.id.in_(unique_ids))
 
     return list(db.scalars(statement).all())
 
@@ -170,9 +152,7 @@ def create_reference(
     media: list[MediaModel],
     franchises: list[FranchiseModel],
 ) -> ReferenceModel:
-    values = data.model_dump(
-        exclude={"media_ids", "franchise_ids"}
-    )
+    values = data.model_dump(exclude={"media_ids", "franchise_ids"})
 
     reference = ReferenceModel(**values)
     reference.media = media
@@ -196,9 +176,7 @@ def update_reference(
     media: list[MediaModel],
     franchises: list[FranchiseModel],
 ) -> ReferenceModel:
-    values = data.model_dump(
-        exclude={"media_ids", "franchise_ids"}
-    )
+    values = data.model_dump(exclude={"media_ids", "franchise_ids"})
 
     for field, value in values.items():
         setattr(reference, field, value)

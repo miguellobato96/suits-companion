@@ -205,7 +205,7 @@ A GitHub Actions workflow is also configured to run linting, formatting checks, 
 - [x] Docker development environment
 - [x] Automated backend test suite
 - [x] Ruff linting and formatting
-- [ ] Validate GitHub Actions CI
+- [x] Validate GitHub Actions CI
 - [ ] Web frontend
 
 ### Future

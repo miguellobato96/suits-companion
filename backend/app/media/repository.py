@@ -1,8 +1,8 @@
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload
 
-from app.media_models import MediaModel
-from app.reference_models import ReferenceModel  # noqa: F401
+from app.media.model import MediaModel
+from app.references.model import ReferenceModel  # noqa: F401
 
 
 def get_media(

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from app.character_repository import (
+from app.characters.repository import (
     count_characters,
     create_new_character,
     delete_existing_character,
@@ -9,15 +9,15 @@ from app.character_repository import (
     get_character_by_id,
     update_existing_character,
 )
-from app.character_schemas import (
+from app.characters.schemas import (
     Character,
     CharacterCreate,
     CharacterListResponse,
     CharacterUpdate,
 )
-from app.database import get_db
-from app.reference_repository import count_references, get_references
-from app.reference_schemas import ReferenceListResponse
+from app.core.database import get_db
+from app.references.repository import count_references, get_references
+from app.references.schemas import ReferenceListResponse
 
 router = APIRouter(prefix="/characters", tags=["Characters"])
 

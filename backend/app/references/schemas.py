@@ -3,9 +3,9 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.character_schemas import Character
-from app.franchise_schemas import Franchise
-from app.media_schemas import Media
+from app.characters.schemas import Character
+from app.franchises.schemas import Franchise
+from app.media.schemas import Media
 
 ReferenceType = Literal[
     "movie",

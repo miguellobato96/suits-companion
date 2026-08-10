@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 
-from app.characters import router as characters_router
-from app.config import settings
-from app.franchises import router as franchises_router
-from app.media import router as media_router
-from app.references import router as references_router
+from app.characters.router import router as characters_router
+from app.core.config import settings
+from app.franchises.router import router as franchises_router
+from app.media.router import router as media_router
+from app.references.router import router as references_router
 
 app = FastAPI(title=settings.app_name)
 

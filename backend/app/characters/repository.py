@@ -2,8 +2,8 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.elements import ColumnElement
 
-from app.character_models import CharacterModel
-from app.character_schemas import Character, CharacterCreate, CharacterUpdate
+from app.characters.model import CharacterModel
+from app.characters.schemas import Character, CharacterCreate, CharacterUpdate
 
 
 def build_search_filter(search: str) -> ColumnElement[bool]:

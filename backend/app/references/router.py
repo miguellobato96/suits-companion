@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy.orm import Session
 
-from app.database import get_db
-from app.franchise_models import FranchiseModel
-from app.media_models import MediaModel
-from app.reference_models import ReferenceModel
-from app.reference_repository import (
+from app.core.database import get_db
+from app.franchises.model import FranchiseModel
+from app.media.model import MediaModel
+from app.references.model import ReferenceModel
+from app.references.repository import (
     character_exists,
     count_references,
     create_reference,
@@ -17,7 +17,7 @@ from app.reference_repository import (
     patch_reference,
     update_reference,
 )
-from app.reference_schemas import (
+from app.references.schemas import (
     Reference,
     ReferenceCreate,
     ReferenceListResponse,

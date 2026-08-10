@@ -1,7 +1,7 @@
 from sqlalchemy import select
 
-from app.character_models import CharacterModel
-from app.database import SessionLocal
+from app.characters.model import CharacterModel
+from app.core.database import SessionLocal
 
 CHARACTERS = [
     {

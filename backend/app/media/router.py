@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from app.database import get_db
-from app.media_models import MediaModel
-from app.media_repository import count_media, get_media, get_media_by_id
-from app.media_schemas import Media, MediaListResponse
+from app.core.database import get_db
+from app.media.model import MediaModel
+from app.media.repository import count_media, get_media, get_media_by_id
+from app.media.schemas import Media, MediaListResponse
 
 router = APIRouter(
     prefix="/media",

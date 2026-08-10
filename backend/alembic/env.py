@@ -3,14 +3,12 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-from app import (
-    character_models,  # noqa: F401
-    franchise_models,  # noqa: F401
-    media_models,  # noqa: F401
-    reference_models,  # noqa: F401
-)
-from app.config import settings
-from app.database import Base
+from app.characters.model import CharacterModel  # noqa: F401
+from app.core.config import settings
+from app.core.database import Base
+from app.franchises.model import FranchiseModel  # noqa: F401
+from app.media.model import MediaModel  # noqa: F401
+from app.references.model import ReferenceModel  # noqa: F401
 
 config = context.config
 config.set_main_option("sqlalchemy.url", settings.database_url)

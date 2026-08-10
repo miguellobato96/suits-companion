@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.database import get_db
-from app.franchise_models import FranchiseModel
-from app.franchise_repository import get_franchises
-from app.franchise_schemas import Franchise
+from app.core.database import get_db
+from app.franchises.model import FranchiseModel
+from app.franchises.repository import get_franchises
+from app.franchises.schemas import Franchise
 
 router = APIRouter(
     prefix="/franchises",

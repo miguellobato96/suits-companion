@@ -1,10 +1,10 @@
 from sqlalchemy import select
 
-from app.character_models import CharacterModel  # noqa: F401
-from app.database import SessionLocal
-from app.franchise_models import FranchiseModel
-from app.media_models import MediaModel
-from app.reference_models import ReferenceModel  # noqa: F401
+from app.characters.model import CharacterModel  # noqa: F401
+from app.core.database import SessionLocal
+from app.franchises.model import FranchiseModel
+from app.media.model import MediaModel
+from app.references.model import ReferenceModel  # noqa: F401
 
 FRANCHISES = [
     "Batman",

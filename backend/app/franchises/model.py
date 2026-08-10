@@ -5,11 +5,11 @@ from sqlalchemy import DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import String
 
-from app.database import Base
+from app.core.database import Base
 
 if TYPE_CHECKING:
-    from app.media_models import MediaModel
-    from app.reference_models import ReferenceModel
+    from app.media.model import MediaModel
+    from app.references.model import ReferenceModel
 
 
 class FranchiseModel(Base):

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 
-from app.franchise_schemas import Franchise
+from app.franchises.schemas import Franchise
 
 
 class Media(BaseModel):

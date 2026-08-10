@@ -3,11 +3,11 @@ from dataclasses import dataclass
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.character_models import CharacterModel
-from app.database import SessionLocal
-from app.franchise_models import FranchiseModel
-from app.media_models import MediaModel
-from app.reference_models import ReferenceModel
+from app.characters.model import CharacterModel
+from app.core.database import SessionLocal
+from app.franchises.model import FranchiseModel
+from app.media.model import MediaModel
+from app.references.model import ReferenceModel
 
 MediaKey = tuple[str, int]
 

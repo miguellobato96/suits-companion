@@ -1,11 +1,11 @@
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session, joinedload
 
-from app.character_models import CharacterModel
-from app.franchise_models import FranchiseModel
-from app.media_models import MediaModel
-from app.reference_models import ReferenceModel
-from app.reference_schemas import ReferenceCreate, ReferenceUpdate
+from app.characters.model import CharacterModel
+from app.franchises.model import FranchiseModel
+from app.media.model import MediaModel
+from app.references.model import ReferenceModel
+from app.references.schemas import ReferenceCreate, ReferenceUpdate
 
 
 def _reference_load_options():

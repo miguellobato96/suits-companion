@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.franchise_models import FranchiseModel
+from app.franchises.model import FranchiseModel
 
 
 def get_franchises(db: Session) -> list[FranchiseModel]:

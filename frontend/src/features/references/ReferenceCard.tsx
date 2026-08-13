@@ -1,4 +1,4 @@
-import type { Reference } from '../types/api'
+import type { Reference } from '../../types/api'
 
 type ReferenceCardProps = {
   reference: Reference

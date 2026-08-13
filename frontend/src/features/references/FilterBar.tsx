@@ -1,4 +1,4 @@
-import type { Character, Franchise } from '../types/api'
+import type { Character, Franchise } from '../../types/api'
 
 type FilterBarProps = {
   characters: Character[]

@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router'
+import ReferenceDetails from './features/references/ReferenceDetails'
 
 import Header from './components/Header'
 import ReferenceBrowser from './features/references/ReferenceBrowser'
@@ -11,6 +12,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<ReferenceBrowser />} />
+        <Route path="/references/:id" element={<ReferenceDetails />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>

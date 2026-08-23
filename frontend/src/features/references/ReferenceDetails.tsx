@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { Link, useLocation, useParams } from 'react-router'
 
 import { getReference } from '../../api/references'
 import type { Reference } from '../../types/api'
@@ -12,6 +12,7 @@ type ReferenceLoadResult = {
 
 function ReferenceDetails() {
   const { id } = useParams()
+  const location = useLocation()
   const referenceId = Number(id)
 
   const isInvalidReferenceId =
@@ -80,7 +81,10 @@ function ReferenceDetails() {
 
         <Link
           className="mt-6 inline-block text-slate-200 underline underline-offset-4"
-          to="/"
+          to={{
+            pathname: '/',
+            search: location.search,
+          }}
         >
           Back to references
         </Link>
@@ -117,7 +121,10 @@ function ReferenceDetails() {
 
         <Link
           className="mt-6 inline-block text-slate-200 underline underline-offset-4"
-          to="/"
+          to={{
+            pathname: '/',
+            search: location.search,
+          }}
         >
           Back to references
         </Link>
@@ -129,7 +136,13 @@ function ReferenceDetails() {
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-8">
-      <Link className="text-sm text-slate-400 hover:text-slate-200" to="/">
+      <Link
+        className="text-sm text-slate-400 hover:text-slate-200"
+        to={{
+          pathname: '/',
+          search: location.search,
+        }}
+      >
         ← Back to references
       </Link>
 

@@ -1,4 +1,4 @@
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 
 import type { Reference } from '../../types/api'
 
@@ -7,10 +7,15 @@ type ReferenceCardProps = {
 }
 
 function ReferenceCard({ reference }: ReferenceCardProps) {
+  const location = useLocation()
+
   return (
     <Link
       className="block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-      to={`/references/${reference.id}`}
+      to={{
+        pathname: `/references/${reference.id}`,
+        search: location.search,
+      }}
     >
       <article className="rounded-xl border border-slate-800 bg-slate-900 p-6 transition hover:border-slate-600 hover:bg-slate-800/50">
         <div className="flex items-start justify-between gap-4">

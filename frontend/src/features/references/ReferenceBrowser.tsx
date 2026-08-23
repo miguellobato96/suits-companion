@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router'
 
 import { getCharacters } from '../../api/characters'
 import { getFranchises } from '../../api/franchises'
@@ -12,19 +13,41 @@ import SearchBar from './SearchBar'
 const PAGE_SIZE = 20
 const SEARCH_DEBOUNCE_MS = 300
 
+function parsePositiveInteger(value: string | null): number | null {
+  if (value === null) {
+    return null
+  }
+
+  const number = Number(value)
+
+  return Number.isInteger(number) && number > 0 ? number : null
+}
+
+function parseOffset(value: string | null): number {
+  if (value === null) {
+    return 0
+  }
+
+  const number = Number(value)
+
+  return Number.isInteger(number) && number >= 0 ? number : 0
+}
+
 function ReferenceBrowser() {
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const searchInput = searchParams.get('search') ?? ''
+  const characterId = parsePositiveInteger(searchParams.get('character_id'))
+  const franchiseId = parsePositiveInteger(searchParams.get('franchise_id'))
+  const offset = parseOffset(searchParams.get('offset'))
+
+  const [debouncedSearch, setDebouncedSearch] = useState(searchInput)
+
   const [references, setReferences] = useState<Reference[]>([])
   const [characters, setCharacters] = useState<Character[]>([])
   const [franchises, setFranchises] = useState<Franchise[]>([])
 
-  const [searchInput, setSearchInput] = useState('')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [characterId, setCharacterId] = useState<number | null>(null)
-  const [franchiseId, setFranchiseId] = useState<number | null>(null)
-
   const [total, setTotal] = useState(0)
-  const [offset, setOffset] = useState(0)
-
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -48,8 +71,7 @@ function ReferenceBrowser() {
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
-      setSearchQuery(searchInput.trim())
-      setOffset(0)
+      setDebouncedSearch(searchInput.trim())
     }, SEARCH_DEBOUNCE_MS)
 
     return () => {
@@ -66,7 +88,7 @@ function ReferenceBrowser() {
 
       try {
         const data = await getReferences({
-          search: searchQuery,
+          search: debouncedSearch,
           characterId: characterId ?? undefined,
           franchiseId: franchiseId ?? undefined,
           offset,
@@ -92,29 +114,88 @@ function ReferenceBrowser() {
     return () => {
       controller.abort()
     }
-  }, [searchQuery, characterId, franchiseId, offset])
+  }, [debouncedSearch, characterId, franchiseId, offset])
+
+  function handleSearchChange(value: string) {
+    setSearchParams(
+      (currentParams) => {
+        const nextParams = new URLSearchParams(currentParams)
+
+        if (value) {
+          nextParams.set('search', value)
+        } else {
+          nextParams.delete('search')
+        }
+
+        nextParams.delete('offset')
+
+        return nextParams
+      },
+      { replace: true },
+    )
+  }
 
   function handleCharacterChange(id: number | null) {
-    setCharacterId(id)
-    setOffset(0)
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams)
+
+      if (id !== null) {
+        nextParams.set('character_id', id.toString())
+      } else {
+        nextParams.delete('character_id')
+      }
+
+      nextParams.delete('offset')
+
+      return nextParams
+    })
   }
 
   function handleFranchiseChange(id: number | null) {
-    setFranchiseId(id)
-    setOffset(0)
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams)
+
+      if (id !== null) {
+        nextParams.set('franchise_id', id.toString())
+      } else {
+        nextParams.delete('franchise_id')
+      }
+
+      nextParams.delete('offset')
+
+      return nextParams
+    })
   }
 
   function handlePrevious() {
-    setOffset((currentOffset) => Math.max(0, currentOffset - PAGE_SIZE))
+    const previousOffset = Math.max(0, offset - PAGE_SIZE)
+
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams)
+
+      if (previousOffset === 0) {
+        nextParams.delete('offset')
+      } else {
+        nextParams.set('offset', previousOffset.toString())
+      }
+
+      return nextParams
+    })
   }
 
   function handleNext() {
-    setOffset((currentOffset) => currentOffset + PAGE_SIZE)
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams)
+
+      nextParams.set('offset', (offset + PAGE_SIZE).toString())
+
+      return nextParams
+    })
   }
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-8">
-      <SearchBar value={searchInput} onChange={setSearchInput} />
+      <SearchBar value={searchInput} onChange={handleSearchChange} />
 
       <FilterBar
         characters={characters}

@@ -194,17 +194,22 @@ function ReferenceBrowser() {
   }
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-8">
-      <SearchBar value={searchInput} onChange={handleSearchChange} />
+    <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      <section
+        className="mb-8 grid gap-4"
+        aria-label="Search and filter references"
+      >
+        <SearchBar value={searchInput} onChange={handleSearchChange} />
 
-      <FilterBar
-        characters={characters}
-        franchises={franchises}
-        characterId={characterId}
-        franchiseId={franchiseId}
-        onCharacterChange={handleCharacterChange}
-        onFranchiseChange={handleFranchiseChange}
-      />
+        <FilterBar
+          characters={characters}
+          franchises={franchises}
+          characterId={characterId}
+          franchiseId={franchiseId}
+          onCharacterChange={handleCharacterChange}
+          onFranchiseChange={handleFranchiseChange}
+        />
+      </section>
 
       {isLoading && references.length === 0 && (
         <p className="text-slate-400">Loading references...</p>

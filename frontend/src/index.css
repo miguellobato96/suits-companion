@@ -1,1 +1,36 @@
 @import 'tailwindcss' source('./');
+
+@theme {
+  --color-canvas: #08101d;
+  --color-panel: #111c2c;
+  --color-panel-hover: #172437;
+  --color-line: #28364a;
+
+  --color-ink: #f7f4ef;
+  --color-muted: #9aa9bb;
+
+  --color-brand: #b4232f;
+  --color-brand-hover: #cf3340;
+  --color-brand-soft: #f1c7cb;
+
+  --font-display: Georgia, Cambria, 'Times New Roman', serif;
+}
+
+@layer base {
+  html {
+    background: var(--color-canvas);
+  }
+
+  body {
+    min-width: 320px;
+    margin: 0;
+    background: var(--color-canvas);
+    color: var(--color-ink);
+  }
+
+  button,
+  input,
+  select {
+    font: inherit;
+  }
+}

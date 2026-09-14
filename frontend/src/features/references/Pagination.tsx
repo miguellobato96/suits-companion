@@ -1,3 +1,5 @@
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+
 type PaginationProps = {
   total: number
   offset: number
@@ -21,28 +23,30 @@ function Pagination({
   const end = Math.min(offset + limit, total)
 
   return (
-    <div className="mt-6 flex items-center justify-between">
-      <p className="text-sm text-slate-400">
+    <div className="mt-8 flex flex-col gap-4 border-t border-line pt-5 sm:flex-row sm:items-center sm:justify-between">
+      <p className="text-sm text-muted">
         Showing {start}–{end} of {total}
       </p>
 
-      <div className="flex gap-2">
+      <div className="grid grid-cols-2 gap-2 sm:flex">
         <button
-          className="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-200 disabled:cursor-not-allowed disabled:opacity-40"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-line bg-panel px-4 text-sm font-medium text-ink transition-colors hover:bg-panel-hover disabled:cursor-not-allowed disabled:opacity-40"
           type="button"
           disabled={offset === 0}
           onClick={onPrevious}
         >
+          <ChevronLeft size={16} aria-hidden="true" />
           Previous
         </button>
 
         <button
-          className="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-200 disabled:cursor-not-allowed disabled:opacity-40"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-line bg-panel px-4 text-sm font-medium text-ink transition-colors hover:bg-panel-hover disabled:cursor-not-allowed disabled:opacity-40"
           type="button"
           disabled={offset + limit >= total}
           onClick={onNext}
         >
           Next
+          <ChevronRight size={16} aria-hidden="true" />
         </button>
       </div>
     </div>

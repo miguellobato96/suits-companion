@@ -2,15 +2,28 @@ import { Link } from 'react-router'
 
 function Header() {
   return (
-    <header className="border-b border-slate-800 bg-slate-950">
-      <div className="mx-auto max-w-7xl px-6 py-6">
-        <Link to="/">
-          <h1 className="text-2xl font-bold text-slate-100">Suits Companion</h1>
-        </Link>
+    <header className="border-b border-line bg-canvas">
+      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
+        <Link
+          className="group inline-flex items-center gap-3 rounded-lg focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-4 focus-visible:ring-offset-canvas focus-visible:outline-none"
+          to="/"
+          aria-label="Suits Companion home"
+        >
+          <span
+            className="h-9 w-1 rounded-full bg-brand transition-colors group-hover:bg-brand-hover"
+            aria-hidden="true"
+          />
 
-        <p className="mt-1 text-sm text-slate-400">
-          Discover the cultural references behind Suits.
-        </p>
+          <span>
+            <span className="block font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+              Suits Companion
+            </span>
+
+            <span className="mt-0.5 block text-xs text-muted sm:text-sm">
+              Discover the cultural references behind Suits.
+            </span>
+          </span>
+        </Link>
       </div>
     </header>
   )

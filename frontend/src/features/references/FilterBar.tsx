@@ -18,42 +18,50 @@ function FilterBar({
   onFranchiseChange,
 }: FilterBarProps) {
   return (
-    <div className="mb-6 grid gap-3 sm:grid-cols-2">
-      <select
-        className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-slate-200"
-        value={characterId ?? ''}
-        onChange={(event) =>
-          onCharacterChange(
-            event.target.value ? Number(event.target.value) : null,
-          )
-        }
-      >
-        <option value="">All characters</option>
+    <div className="grid gap-4 sm:grid-cols-2">
+      <label className="grid gap-2">
+        <span className="text-sm font-medium text-muted">Character</span>
 
-        {characters.map((character) => (
-          <option key={character.id} value={character.id}>
-            {character.name}
-          </option>
-        ))}
-      </select>
+        <select
+          className="min-h-12 w-full rounded-xl border border-line bg-panel px-4 text-ink transition-colors focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
+          value={characterId ?? ''}
+          onChange={(event) =>
+            onCharacterChange(
+              event.target.value ? Number(event.target.value) : null,
+            )
+          }
+        >
+          <option value="">All characters</option>
 
-      <select
-        className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-slate-200"
-        value={franchiseId ?? ''}
-        onChange={(event) =>
-          onFranchiseChange(
-            event.target.value ? Number(event.target.value) : null,
-          )
-        }
-      >
-        <option value="">All franchises</option>
+          {characters.map((character) => (
+            <option key={character.id} value={character.id}>
+              {character.name}
+            </option>
+          ))}
+        </select>
+      </label>
 
-        {franchises.map((franchise) => (
-          <option key={franchise.id} value={franchise.id}>
-            {franchise.name}
-          </option>
-        ))}
-      </select>
+      <label className="grid gap-2">
+        <span className="text-sm font-medium text-muted">Franchise</span>
+
+        <select
+          className="min-h-12 w-full rounded-xl border border-line bg-panel px-4 text-ink transition-colors focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
+          value={franchiseId ?? ''}
+          onChange={(event) =>
+            onFranchiseChange(
+              event.target.value ? Number(event.target.value) : null,
+            )
+          }
+        >
+          <option value="">All franchises</option>
+
+          {franchises.map((franchise) => (
+            <option key={franchise.id} value={franchise.id}>
+              {franchise.name}
+            </option>
+          ))}
+        </select>
+      </label>
     </div>
   )
 }

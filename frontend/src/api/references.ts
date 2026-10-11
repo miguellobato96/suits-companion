@@ -1,4 +1,8 @@
-import type { Reference, ReferenceListResponse } from '../types/api'
+import type {
+  Reference,
+  ReferenceFilterOptionsResponse,
+  ReferenceListResponse,
+} from '../types/api'
 
 type GetReferencesParams = {
   search?: string
@@ -6,6 +10,13 @@ type GetReferencesParams = {
   franchiseId?: number
   offset?: number
   limit?: number
+  signal?: AbortSignal
+}
+
+type GetReferenceFilterOptionsParams = {
+  search?: string
+  characterId?: number
+  franchiseId?: number
   signal?: AbortSignal
 }
 
@@ -40,6 +51,38 @@ export async function getReferences({
 
   if (!response.ok) {
     throw new Error('Failed to fetch references')
+  }
+
+  return response.json()
+}
+
+export async function getReferenceFilterOptions({
+  search,
+  characterId,
+  franchiseId,
+  signal,
+}: GetReferenceFilterOptionsParams = {}): Promise<ReferenceFilterOptionsResponse> {
+  const params = new URLSearchParams()
+
+  if (search) {
+    params.set('search', search)
+  }
+
+  if (characterId) {
+    params.set('character_id', characterId.toString())
+  }
+
+  if (franchiseId) {
+    params.set('franchise_id', franchiseId.toString())
+  }
+
+  const query = params.toString()
+  const url = `/api/references/filter-options${query ? `?${query}` : ''}`
+
+  const response = await fetch(url, { signal })
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch filter options')
   }
 
   return response.json()

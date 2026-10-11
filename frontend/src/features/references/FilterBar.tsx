@@ -1,8 +1,8 @@
-import type { Character, Franchise } from '../../types/api'
+import type { FilterOption } from '../../types/api'
 
 type FilterBarProps = {
-  characters: Character[]
-  franchises: Franchise[]
+  characters: FilterOption[]
+  franchises: FilterOption[]
   characterId: number | null
   franchiseId: number | null
   onCharacterChange: (id: number | null) => void
@@ -23,19 +23,24 @@ function FilterBar({
         <span className="text-sm font-medium text-muted">Character</span>
 
         <select
-          className="min-h-12 w-full rounded-xl border border-line bg-panel px-4 text-ink transition-colors focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
+          className="min-h-12 w-full rounded-xl border border-line bg-panel px-4 text-ink transition-colors focus:border-muted focus:ring-2 focus:ring-ink/10 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
           value={characterId ?? ''}
+          disabled={characters.length === 0}
           onChange={(event) =>
             onCharacterChange(
               event.target.value ? Number(event.target.value) : null,
             )
           }
         >
-          <option value="">All characters</option>
+          <option value="">
+            {characters.length === 0
+              ? 'No characters available'
+              : 'All characters'}
+          </option>
 
           {characters.map((character) => (
             <option key={character.id} value={character.id}>
-              {character.name}
+              {character.name} ({character.count})
             </option>
           ))}
         </select>
@@ -45,19 +50,24 @@ function FilterBar({
         <span className="text-sm font-medium text-muted">Franchise</span>
 
         <select
-          className="min-h-12 w-full rounded-xl border border-line bg-panel px-4 text-ink transition-colors focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
+          className="min-h-12 w-full rounded-xl border border-line bg-panel px-4 text-ink transition-colors focus:border-muted focus:ring-2 focus:ring-ink/10 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
           value={franchiseId ?? ''}
+          disabled={franchises.length === 0}
           onChange={(event) =>
             onFranchiseChange(
               event.target.value ? Number(event.target.value) : null,
             )
           }
         >
-          <option value="">All franchises</option>
+          <option value="">
+            {franchises.length === 0
+              ? 'No franchises available'
+              : 'All franchises'}
+          </option>
 
           {franchises.map((franchise) => (
             <option key={franchise.id} value={franchise.id}>
-              {franchise.name}
+              {franchise.name} ({franchise.count})
             </option>
           ))}
         </select>

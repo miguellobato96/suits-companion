@@ -103,12 +103,8 @@ def test_filter_options_returns_expected_response_shape() -> None:
 
 
 def test_filter_options_reject_invalid_ids() -> None:
-    character_response = client.get(
-        "/references/filter-options?character_id=0"
-    )
-    franchise_response = client.get(
-        "/references/filter-options?franchise_id=0"
-    )
+    character_response = client.get("/references/filter-options?character_id=0")
+    franchise_response = client.get("/references/filter-options?franchise_id=0")
 
     assert character_response.status_code == 422
     assert franchise_response.status_code == 422

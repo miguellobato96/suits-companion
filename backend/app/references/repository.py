@@ -252,3 +252,95 @@ def count_references_by_character(
         db=db,
         character_id=character_id,
     )
+
+
+def get_character_filter_options(
+    db: Session,
+    *,
+    search: str | None = None,
+    franchise_id: int | None = None,
+) -> list[dict]:
+    statement = (
+        select(
+            CharacterModel.id,
+            CharacterModel.name,
+            func.count(ReferenceModel.id).label("count"),
+        )
+        .join(
+            ReferenceModel,
+            ReferenceModel.spoken_by_character_id == CharacterModel.id,
+        )
+        .group_by(CharacterModel.id, CharacterModel.name)
+        .order_by(CharacterModel.name)
+    )
+
+    if search:
+        pattern = f"%{search}%"
+        statement = statement.where(
+            or_(
+                ReferenceModel.title.ilike(pattern),
+                ReferenceModel.quote.ilike(pattern),
+                ReferenceModel.context.ilike(pattern),
+            )
+        )
+
+    if franchise_id is not None:
+        statement = statement.where(
+            ReferenceModel.franchises.any(FranchiseModel.id == franchise_id)
+        )
+
+    rows = db.execute(statement).all()
+
+    return [
+        {
+            "id": row.id,
+            "name": row.name,
+            "count": row.count,
+        }
+        for row in rows
+    ]
+
+
+def get_franchise_filter_options(
+    db: Session,
+    *,
+    search: str | None = None,
+    character_id: int | None = None,
+) -> list[dict]:
+    statement = (
+        select(
+            FranchiseModel.id,
+            FranchiseModel.name,
+            func.count(func.distinct(ReferenceModel.id)).label("count"),
+        )
+        .select_from(ReferenceModel)
+        .join(ReferenceModel.franchises)
+        .group_by(FranchiseModel.id, FranchiseModel.name)
+        .order_by(FranchiseModel.name)
+    )
+
+    if search:
+        pattern = f"%{search}%"
+        statement = statement.where(
+            or_(
+                ReferenceModel.title.ilike(pattern),
+                ReferenceModel.quote.ilike(pattern),
+                ReferenceModel.context.ilike(pattern),
+            )
+        )
+
+    if character_id is not None:
+        statement = statement.where(
+            ReferenceModel.spoken_by_character_id == character_id
+        )
+
+    rows = db.execute(statement).all()
+
+    return [
+        {
+            "id": row.id,
+            "name": row.name,
+            "count": row.count,
+        }
+        for row in rows
+    ]

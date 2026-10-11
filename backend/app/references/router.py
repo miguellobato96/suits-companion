@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy.orm import Session
 
+from app.characters.model import CharacterModel
 from app.core.database import get_db
 from app.franchises.model import FranchiseModel
 from app.media.model import MediaModel
@@ -10,6 +11,8 @@ from app.references.repository import (
     count_references,
     create_reference,
     delete_reference,
+    get_character_filter_options,
+    get_franchise_filter_options,
     get_franchises_by_ids,
     get_media_by_ids,
     get_reference,
@@ -20,6 +23,7 @@ from app.references.repository import (
 from app.references.schemas import (
     Reference,
     ReferenceCreate,
+    ReferenceFilterOptionsResponse,
     ReferenceListResponse,
     ReferencePatch,
     ReferenceType,
@@ -30,6 +34,66 @@ router = APIRouter(
     prefix="/references",
     tags=["references"],
 )
+
+
+# Keep static routes before /{reference_id} so FastAPI does not
+# interpret their path segment as a reference ID.
+@router.get(
+    "/filter-options",
+    response_model=ReferenceFilterOptionsResponse,
+)
+def read_reference_filter_options(
+    search: str | None = Query(default=None),
+    character_id: int | None = Query(default=None, ge=1),
+    franchise_id: int | None = Query(default=None, ge=1),
+    db: Session = Depends(get_db),
+) -> ReferenceFilterOptionsResponse:
+    characters = get_character_filter_options(
+        db,
+        search=search,
+        franchise_id=franchise_id,
+    )
+
+    franchises = get_franchise_filter_options(
+        db,
+        search=search,
+        character_id=character_id,
+    )
+
+    if character_id is not None and not any(
+        option["id"] == character_id for option in characters
+    ):
+        character = db.get(CharacterModel, character_id)
+
+        if character is not None:
+            characters.append(
+                {
+                    "id": character.id,
+                    "name": character.name,
+                    "count": 0,
+                }
+            )
+            characters.sort(key=lambda option: option["name"])
+
+    if franchise_id is not None and not any(
+        option["id"] == franchise_id for option in franchises
+    ):
+        franchise = db.get(FranchiseModel, franchise_id)
+
+        if franchise is not None:
+            franchises.append(
+                {
+                    "id": franchise.id,
+                    "name": franchise.name,
+                    "count": 0,
+                }
+            )
+            franchises.sort(key=lambda option: option["name"])
+
+    return ReferenceFilterOptionsResponse(
+        characters=characters,
+        franchises=franchises,
+    )
 
 
 def resolve_media(

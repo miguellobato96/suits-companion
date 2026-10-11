@@ -87,3 +87,14 @@ class ReferenceListResponse(BaseModel):
     total: int
     offset: int
     limit: int
+
+
+class FilterOption(BaseModel):
+    id: int
+    name: str
+    count: int
+
+
+class ReferenceFilterOptionsResponse(BaseModel):
+    characters: list[FilterOption]
+    franchises: list[FilterOption]

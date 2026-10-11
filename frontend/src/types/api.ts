@@ -43,3 +43,14 @@ export type ReferenceListResponse = {
   offset: number
   limit: number
 }
+
+export type FilterOption = {
+  id: number
+  name: string
+  count: number
+}
+
+export type ReferenceFilterOptionsResponse = {
+  characters: FilterOption[]
+  franchises: FilterOption[]
+}

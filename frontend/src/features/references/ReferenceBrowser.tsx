@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router'
 
-import { getCharacters } from '../../api/characters'
-import { getFranchises } from '../../api/franchises'
-import { getReferences } from '../../api/references'
-import type { Character, Franchise, Reference } from '../../types/api'
+import { getReferenceFilterOptions, getReferences } from '../../api/references'
+import type { Reference, ReferenceFilterOptionsResponse } from '../../types/api'
 import FilterBar from './FilterBar'
 import Pagination from './Pagination'
 import ReferenceCard from './ReferenceCard'
@@ -44,30 +42,47 @@ function ReferenceBrowser() {
   const [debouncedSearch, setDebouncedSearch] = useState(searchInput)
 
   const [references, setReferences] = useState<Reference[]>([])
-  const [characters, setCharacters] = useState<Character[]>([])
-  const [franchises, setFranchises] = useState<Franchise[]>([])
+
+  const [filterOptions, setFilterOptions] =
+    useState<ReferenceFilterOptionsResponse>({
+      characters: [],
+      franchises: [],
+    })
+
+  const [filterError, setFilterError] = useState<string | null>(null)
 
   const [total, setTotal] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    async function loadFilters() {
-      try {
-        const [characterData, franchiseData] = await Promise.all([
-          getCharacters(),
-          getFranchises(),
-        ])
+    const controller = new AbortController()
 
-        setCharacters(characterData.items)
-        setFranchises(franchiseData)
+    async function loadFilterOptions() {
+      setFilterError(null)
+
+      try {
+        const data = await getReferenceFilterOptions({
+          search: debouncedSearch,
+          characterId: characterId ?? undefined,
+          franchiseId: franchiseId ?? undefined,
+          signal: controller.signal,
+        })
+
+        setFilterOptions(data)
       } catch {
-        setError('Failed to load filters.')
+        if (!controller.signal.aborted) {
+          setFilterError('Failed to load filter options.')
+        }
       }
     }
 
-    loadFilters()
-  }, [])
+    loadFilterOptions()
+
+    return () => {
+      controller.abort()
+    }
+  }, [debouncedSearch, characterId, franchiseId])
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -202,14 +217,18 @@ function ReferenceBrowser() {
         <SearchBar value={searchInput} onChange={handleSearchChange} />
 
         <FilterBar
-          characters={characters}
-          franchises={franchises}
+          characters={filterOptions.characters}
+          franchises={filterOptions.franchises}
           characterId={characterId}
           franchiseId={franchiseId}
           onCharacterChange={handleCharacterChange}
           onFranchiseChange={handleFranchiseChange}
         />
       </section>
+
+      {filterError && (
+        <p className="mb-6 text-sm text-red-400">{filterError}</p>
+      )}
 
       {isLoading && references.length === 0 && (
         <p className="text-slate-400">Loading references...</p>

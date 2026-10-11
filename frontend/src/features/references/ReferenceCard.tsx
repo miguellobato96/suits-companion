@@ -1,3 +1,4 @@
+import { ChevronRight } from 'lucide-react'
 import { Link, useLocation } from 'react-router'
 
 import type { Reference } from '../../types/api'
@@ -17,7 +18,7 @@ function ReferenceCard({ reference }: ReferenceCardProps) {
         search: location.search,
       }}
     >
-      <article className="relative overflow-hidden rounded-2xl border border-line bg-panel p-5 transition duration-200 group-hover:-translate-y-0.5 group-hover:border-brand/60 group-hover:bg-panel-hover sm:p-6">
+      <article className="relative overflow-hidden rounded-2xl border border-line bg-panel p-5 transition duration-200 group-hover:-translate-y-0.5 group-hover:border-brand/60 group-hover:bg-panel-hover active:bg-panel-hover sm:p-6">
         <span
           className="absolute top-0 left-0 h-full w-1 bg-brand opacity-0 transition-opacity group-hover:opacity-100"
           aria-hidden="true"
@@ -70,9 +71,11 @@ function ReferenceCard({ reference }: ReferenceCardProps) {
             ))}
           </div>
 
-          <span className="ml-4 shrink-0 text-sm font-medium text-brand-soft transition-colors group-hover:text-ink">
-            View reference
-          </span>
+          <ChevronRight
+            className="ml-4 shrink-0 text-muted transition-all group-hover:translate-x-0.5 group-hover:text-ink"
+            size={18}
+            aria-hidden="true"
+          />
         </div>
       </article>
     </Link>

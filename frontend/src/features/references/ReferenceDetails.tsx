@@ -73,6 +73,20 @@ function ReferenceDetails() {
     search: location.search,
   }
 
+  function getFilteredReferencesUrl(
+    filter: 'character_id' | 'franchise_id',
+    id: number,
+  ) {
+    const params = new URLSearchParams()
+
+    params.set(filter, id.toString())
+
+    return {
+      pathname: '/',
+      search: `?${params.toString()}`,
+    }
+  }
+
   if (isInvalidReferenceId) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
@@ -163,9 +177,15 @@ function ReferenceDetails() {
               </h1>
 
               {reference.spoken_by_character && (
-                <p className="mt-3 text-sm text-muted">
+                <Link
+                  className="mt-3 inline-block rounded text-sm font-medium text-muted transition-colors hover:text-brand-soft focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+                  to={getFilteredReferencesUrl(
+                    'character_id',
+                    reference.spoken_by_character.id,
+                  )}
+                >
                   {reference.spoken_by_character.name}
-                </p>
+                </Link>
               )}
             </div>
 
@@ -222,12 +242,13 @@ function ReferenceDetails() {
 
               <div className="mt-4 flex flex-wrap gap-2">
                 {reference.franchises.map((franchise) => (
-                  <span
+                  <Link
                     key={franchise.id}
-                    className="rounded-full border border-line bg-canvas/40 px-3 py-1.5 text-sm text-muted"
+                    className="rounded-full border border-line bg-canvas/40 px-3 py-1.5 text-sm text-muted transition-colors hover:border-brand/60 hover:text-ink focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+                    to={getFilteredReferencesUrl('franchise_id', franchise.id)}
                   >
                     {franchise.name}
-                  </span>
+                  </Link>
                 ))}
               </div>
             </section>

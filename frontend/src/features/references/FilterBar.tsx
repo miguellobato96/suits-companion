@@ -5,6 +5,7 @@ type FilterBarProps = {
   franchises: FilterOption[]
   characterId: number | null
   franchiseId: number | null
+  isUnavailable?: boolean
   onCharacterChange: (id: number | null) => void
   onFranchiseChange: (id: number | null) => void
 }
@@ -14,9 +15,13 @@ function FilterBar({
   franchises,
   characterId,
   franchiseId,
+  isUnavailable = false,
   onCharacterChange,
   onFranchiseChange,
 }: FilterBarProps) {
+  const characterUnavailable = isUnavailable || characters.length === 0
+  const franchiseUnavailable = isUnavailable || franchises.length === 0
+
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       <label className="grid gap-2">
@@ -25,7 +30,7 @@ function FilterBar({
         <select
           className="min-h-12 w-full rounded-xl border border-line bg-panel px-4 text-ink transition-colors focus:border-muted focus:ring-2 focus:ring-ink/10 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
           value={characterId ?? ''}
-          disabled={characters.length === 0}
+          disabled={characterUnavailable}
           onChange={(event) =>
             onCharacterChange(
               event.target.value ? Number(event.target.value) : null,
@@ -33,9 +38,11 @@ function FilterBar({
           }
         >
           <option value="">
-            {characters.length === 0
-              ? 'No characters available'
-              : 'All characters'}
+            {isUnavailable
+              ? 'Characters unavailable'
+              : characters.length === 0
+                ? 'No characters available'
+                : 'All characters'}
           </option>
 
           {characters.map((character) => (
@@ -52,7 +59,7 @@ function FilterBar({
         <select
           className="min-h-12 w-full rounded-xl border border-line bg-panel px-4 text-ink transition-colors focus:border-muted focus:ring-2 focus:ring-ink/10 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
           value={franchiseId ?? ''}
-          disabled={franchises.length === 0}
+          disabled={franchiseUnavailable}
           onChange={(event) =>
             onFranchiseChange(
               event.target.value ? Number(event.target.value) : null,
@@ -60,9 +67,11 @@ function FilterBar({
           }
         >
           <option value="">
-            {franchises.length === 0
-              ? 'No franchises available'
-              : 'All franchises'}
+            {isUnavailable
+              ? 'Franchises unavailable'
+              : franchises.length === 0
+                ? 'No franchises available'
+                : 'All franchises'}
           </option>
 
           {franchises.map((franchise) => (

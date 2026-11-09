@@ -25,7 +25,7 @@ function Pagination({
   return (
     <div className="mt-8 flex flex-col gap-4 border-t border-line pt-5 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm text-muted">
-        Showing {start}–{end} of {total}
+        Showing {start}-{end} of {total}
       </p>
 
       <div className="grid grid-cols-2 gap-2 sm:flex">

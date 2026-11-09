@@ -1,3 +1,4 @@
+/* Explicit source detection avoids missing Tailwind classes in this project structure. */
 @import 'tailwindcss' source('./');
 
 @theme {

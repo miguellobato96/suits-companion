@@ -1,3 +1,4 @@
+import { RefreshCw } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router'
 
@@ -54,6 +55,7 @@ function ReferenceBrowser() {
   const [total, setTotal] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [retryKey, setRetryKey] = useState(0)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -82,8 +84,9 @@ function ReferenceBrowser() {
     return () => {
       controller.abort()
     }
-  }, [debouncedSearch, characterId, franchiseId])
+  }, [debouncedSearch, characterId, franchiseId, retryKey])
 
+  // Keep URL state immediate while debouncing only the API search request.
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       setDebouncedSearch(searchInput.trim())
@@ -129,7 +132,7 @@ function ReferenceBrowser() {
     return () => {
       controller.abort()
     }
-  }, [debouncedSearch, characterId, franchiseId, offset])
+  }, [debouncedSearch, characterId, franchiseId, offset, retryKey])
 
   function handleSearchChange(value: string) {
     setSearchParams(
@@ -208,6 +211,12 @@ function ReferenceBrowser() {
     })
   }
 
+  function handleRetry() {
+    setRetryKey((current) => current + 1)
+  }
+
+  const hasReferenceError = error !== null
+
   return (
     <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
       <section
@@ -221,44 +230,94 @@ function ReferenceBrowser() {
           franchises={filterOptions.franchises}
           characterId={characterId}
           franchiseId={franchiseId}
+          isUnavailable={
+            filterError !== null && filterOptions.characters.length === 0
+          }
           onCharacterChange={handleCharacterChange}
           onFranchiseChange={handleFranchiseChange}
         />
       </section>
 
-      {filterError && (
-        <p className="mb-6 text-sm text-red-400">{filterError}</p>
-      )}
+      {hasReferenceError ? (
+        <section
+          className="rounded-2xl border border-line bg-panel px-5 py-8 sm:px-8"
+          role="alert"
+        >
+          <p className="text-xs font-semibold tracking-[0.14em] text-brand-soft uppercase">
+            Connection error
+          </p>
 
-      {isLoading && references.length === 0 && (
-        <p className="text-slate-400">Loading references...</p>
-      )}
+          <h1 className="mt-2 font-display text-2xl font-bold text-ink">
+            Unable to load references
+          </h1>
 
-      {error && <p className="text-red-400">{error}</p>}
+          <p className="mt-3 max-w-xl leading-7 text-muted">
+            Something went wrong while loading the references. Check your
+            connection and try again.
+          </p>
 
-      {!isLoading && !error && references.length === 0 && (
-        <p className="text-slate-400">No references found.</p>
-      )}
-
-      {!error && references.length > 0 && (
+          <button
+            className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-xl border border-line bg-canvas/40 px-4 text-sm font-medium text-ink transition-colors hover:bg-panel-hover focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+            type="button"
+            onClick={handleRetry}
+          >
+            <RefreshCw size={16} aria-hidden="true" />
+            Try again
+          </button>
+        </section>
+      ) : (
         <>
-          {isLoading && (
-            <p className="mb-3 text-sm text-slate-500">Updating results...</p>
+          {filterError && (
+            <p className="mb-6 text-sm text-red-400" role="alert">
+              Filter options are temporarily unavailable.
+            </p>
           )}
 
-          <div className="grid gap-4">
-            {references.map((reference) => (
-              <ReferenceCard key={reference.id} reference={reference} />
-            ))}
-          </div>
+          {isLoading && references.length === 0 && (
+            <p className="text-muted" role="status">
+              Loading references...
+            </p>
+          )}
 
-          <Pagination
-            total={total}
-            offset={offset}
-            limit={PAGE_SIZE}
-            onPrevious={handlePrevious}
-            onNext={handleNext}
-          />
+          {!isLoading && references.length === 0 && (
+            <section className="rounded-2xl border border-line bg-panel px-5 py-8 sm:px-8">
+              <p className="text-xs font-semibold tracking-[0.14em] text-brand-soft uppercase">
+                No results
+              </p>
+
+              <h2 className="mt-2 font-display text-2xl font-bold text-ink">
+                No references found
+              </h2>
+
+              <p className="mt-3 text-muted">
+                Try changing your search or removing one of the filters.
+              </p>
+            </section>
+          )}
+
+          {references.length > 0 && (
+            <>
+              {isLoading && (
+                <p className="mb-3 text-sm text-muted" role="status">
+                  Updating results...
+                </p>
+              )}
+
+              <div className="grid gap-4">
+                {references.map((reference) => (
+                  <ReferenceCard key={reference.id} reference={reference} />
+                ))}
+              </div>
+
+              <Pagination
+                total={total}
+                offset={offset}
+                limit={PAGE_SIZE}
+                onPrevious={handlePrevious}
+                onNext={handleNext}
+              />
+            </>
+          )}
         </>
       )}
     </main>
